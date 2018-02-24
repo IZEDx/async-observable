@@ -11,17 +11,9 @@
         "strict": true,
         "noUnusedLocals": true,
         "suppressImplicitAnyIndexErrors": true,
-        "declaration": true,
-        "declarationDir": "types",
         "lib": [
             "es2017",
             "esnext.asynciterable"
         ],
-        "outDir": "dist"
-    },
-    "exclude": [
-        "node_modules",
-        "tests",
-        "types"
-    ]
+    }
   }

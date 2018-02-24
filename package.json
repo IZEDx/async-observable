@@ -5,9 +5,9 @@
   "main": "dist/main.js",
   "types": "types/main.d.js",
   "scripts": {
-    "build": "./node_modules/.bin/tsc",
+    "build": "./node_modules/.bin/tsc --config tsconfig.build.json",
     "watch": "npm run build -- --watch",
-    "test": "./node_modules/.bin/mocha -r ts-node/register tests/*.ts"
+    "test": "./node_modules/.bin/mocha -p tests -r ts-node/register tests/*.ts"
   },
   "repository": {
     "type": "git",
