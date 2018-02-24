@@ -1,6 +1,31 @@
 
-import { IAsyncIterable } from "./asynciterable";
+import { IAsyncIterable, polyfillAsyncIterator } from "./asynciterable";
 import { IObserver } from "./observer";
+
+polyfillAsyncIterator();
+const nop = () => {};
+const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+export function callback<T, K>(val: T, fn: (val: T, callback: (err: any, v: K) => any) => any): IAsyncIterable<K> {
+    return create(observer => {
+        fn(val, (err, v) => {
+            if (!!err) {
+                (observer.error || nop)(err);
+            } else {
+                observer.next(v);
+            }
+            (observer.complete || nop)();
+        });
+    });
+}
+
+export async function* interval(ms: number): IAsyncIterable<number> {
+    let c = 0;
+    while (true) {
+        yield c++;
+        await sleep(ms);
+    }
+}
 
 /**
  * Creates an async iterable that emits the given arguments and awaits them in case they're promises.

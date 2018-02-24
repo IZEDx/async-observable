@@ -3,7 +3,9 @@ function polyfillSymbol(name: string) {
     (<any>Symbol)[name] = Symbol[name] !== undefined ? Symbol[name] : Symbol.for(name);
 }
 
-polyfillSymbol("asyncIterator");
+export function polyfillAsyncIterator() {
+    polyfillSymbol("asyncIterator");
+}
 
 /** 
  * An AsyncIterable can be iterated on asynchronously.

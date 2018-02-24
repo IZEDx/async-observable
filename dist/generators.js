@@ -12,6 +12,34 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
     function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const asynciterable_1 = require("./asynciterable");
+asynciterable_1.polyfillAsyncIterator();
+const nop = () => { };
+const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+function callback(val, fn) {
+    return create(observer => {
+        fn(val, (err, v) => {
+            if (!!err) {
+                (observer.error || nop)(err);
+            }
+            else {
+                observer.next(v);
+            }
+            (observer.complete || nop)();
+        });
+    });
+}
+exports.callback = callback;
+function interval(ms) {
+    return __asyncGenerator(this, arguments, function* interval_1() {
+        let c = 0;
+        while (true) {
+            yield c++;
+            yield __await(sleep(ms));
+        }
+    });
+}
+exports.interval = interval;
 function of(...values) {
     return __asyncGenerator(this, arguments, function* of_1() {
         for (const v of values) {
