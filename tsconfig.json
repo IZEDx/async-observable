@@ -1,0 +1,27 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "target": "es2015",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "pretty": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "removeComments": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "declaration": true,
+        "declarationDir": "types",
+        "lib": [
+            "es2017",
+            "esnext.asynciterable"
+        ],
+        "outDir": "dist"
+    },
+    "exclude": [
+        "node_modules",
+        "tests"
+    ]
+  }

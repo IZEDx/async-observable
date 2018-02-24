@@ -1,0 +1,33 @@
+{
+  "name": "async-observable",
+  "version": "0.0.1",
+  "description": "Observable implementation using TypeScript, async/await and AsyncIterables.",
+  "main": "dist/main.js",
+  "types": "types/main.d.js",
+  "scripts": {
+    "build": "./node_modules/.bin/tsc",
+    "watch": "npm run build -- --watch",
+    "test": "./node_modules/.bin/mocha -r ts-node/register tests/*.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IZEDx/async-observable.git"
+  },
+  "author": "Niklas Kühtmann",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/IZEDx/async-observable/issues"
+  },
+  "homepage": "https://github.com/IZEDx/async-observable#readme",
+  "devDependencies": {
+    "@types/chai": "^4.0.10",
+    "@types/mocha": "^2.2.44",
+    "chai": "^4.1.2",
+    "mocha": "^4.0.1",
+    "ts-node": "^4.0.1",
+    "typescript": "^2.7"
+  },
+  "dependencies": {
+    "@types/node": "^8.0.53"
+  }
+}
