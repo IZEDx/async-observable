@@ -13,6 +13,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     return m ? m.call(o) : typeof __values === "function" ? __values(o) : o[Symbol.iterator]();
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const observer_1 = require("./observer");
 const AsyncGenerators = require("./generators");
 const AsyncOperators = require("./operators");
 class Observable {
@@ -56,13 +57,16 @@ class Observable {
     forEach(fn) {
         return new Observable(AsyncOperators.forEach(this, fn));
     }
-    subscribe(consumer) {
+    subscribe(subscriber) {
         return __awaiter(this, void 0, void 0, function* () {
+            let observer = subscriber instanceof observer_1.Observer
+                ? subscriber
+                : new observer_1.Observer(subscriber);
             try {
                 try {
                     for (var _a = __asyncValues(this), _b; _b = yield _a.next(), !_b.done;) {
                         const data = yield _b.value;
-                        const r = consumer.next(data);
+                        const r = observer.next(data);
                         if (r instanceof Promise) {
                             yield r;
                         }
@@ -77,18 +81,14 @@ class Observable {
                 }
             }
             catch (e) {
-                if (consumer.error !== undefined) {
-                    const r = consumer.error(e);
-                    if (r instanceof Promise) {
-                        yield r;
-                    }
-                }
-            }
-            if (consumer.complete !== undefined) {
-                const r = consumer.complete();
+                const r = observer.error(e);
                 if (r instanceof Promise) {
                     yield r;
                 }
+            }
+            const r = observer.complete();
+            if (r instanceof Promise) {
+                yield r;
             }
             var e_1, _c;
         });

@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { IAsyncIterable } from "./asynciterable";
-import { IObserver } from "./observer";
+import { IObserver, Observer } from "./observer";
 export declare class Observable<T> {
     [Symbol.asyncIterator]: () => AsyncIterator<T>;
     constructor(ai: IAsyncIterable<T>);
@@ -13,7 +13,7 @@ export declare class Observable<T> {
     do(fn: (value: T) => Promise<void> | void): Observable<T>;
     pipe(consumer: IObserver<T>): Promise<void>;
     forEach(fn: (value: T) => Promise<void> | void): Observable<T>;
-    subscribe(consumer: IObserver<T>): Promise<void>;
+    subscribe(subscriber: Observer<T> | IObserver<T>): Promise<void>;
     filter(fn: (value: T) => Promise<boolean> | boolean): Observable<T>;
     map<K>(fn: (value: T) => Promise<K> | K): Observable<K>;
     flatMap<K>(fn: (value: T) => Observable<K>): Observable<K>;

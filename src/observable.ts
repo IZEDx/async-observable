@@ -1,6 +1,6 @@
 
 import { IAsyncIterable } from "./asynciterable";
-import { IObserver } from "./observer";
+import { IObserver, Observer } from "./observer";
 import * as AsyncGenerators from "./generators";
 import * as AsyncOperators from "./operators";
 
@@ -76,28 +76,28 @@ export class Observable<T> {
         return new Observable(AsyncOperators.forEach(this, fn));
     }
 
-    public async subscribe(consumer: IObserver<T>): Promise<void> {
+    public async subscribe(subscriber: Observer<T>|IObserver<T>): Promise<void> {
+        let observer: Observer<T> = subscriber instanceof Observer
+            ?   subscriber
+            :   new Observer(subscriber);
+            
         try {
             for await(const data of this) {
-                const r = consumer.next(data);
+                const r = observer.next(data);
                 if (r instanceof Promise) {
                     await r;
                 }
             }
         } catch (e) {
-            if (consumer.error !== undefined) {
-                const r = consumer.error(e);
-                if (r instanceof Promise) {
-                    await r;
-                }
-            }
-        }
-
-        if (consumer.complete !== undefined) {
-            const r = consumer.complete();
+            const r = observer.error(e);
             if (r instanceof Promise) {
                 await r;
             }
+        }
+
+        const r = observer.complete();
+        if (r instanceof Promise) {
+            await r;
         }
     }
 
