@@ -13,6 +13,7 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const asynciterable_1 = require("./asynciterable");
+const observer_1 = require("./observer");
 asynciterable_1.polyfillAsyncIterator();
 const nop = () => { };
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
@@ -20,21 +21,20 @@ function callback(val, fn) {
     return create(observer => {
         fn(val, (err, v) => {
             if (!!err) {
-                (observer.error || nop)(err);
+                observer.error(err);
             }
             else {
                 observer.next(v);
             }
-            (observer.complete || nop)();
+            observer.complete();
         });
     });
 }
 exports.callback = callback;
-function interval(ms) {
+function interval(ms, max) {
     return __asyncGenerator(this, arguments, function* interval_1() {
-        let c = 0;
-        while (true) {
-            yield c++;
+        for (let i = 0; i < max; i++) {
+            yield i;
             yield __await(sleep(ms));
         }
     });
@@ -62,8 +62,11 @@ function create(creator) {
             let waitingNext = null;
             let waitingError;
             const queue = [];
-            creator({
+            let error;
+            creator(new observer_1.Observer({
                 next(value) {
+                    if (error !== undefined)
+                        return;
                     if (waitingNext === null) {
                         queue.push({ value, done: false });
                     }
@@ -73,6 +76,8 @@ function create(creator) {
                     }
                 },
                 complete() {
+                    if (error !== undefined)
+                        return;
                     if (waitingNext === null) {
                         queue.push({ value: undefined, done: true });
                     }
@@ -82,17 +87,25 @@ function create(creator) {
                     }
                 },
                 error(err) {
-                    if (waitingError !== undefined) {
+                    if (waitingError === undefined) {
+                        error = err;
+                    }
+                    else {
                         waitingError(err);
                     }
                 }
-            });
+            }));
             return {
                 next() {
                     return new Promise((resolve, reject) => {
                         waitingError = reject;
                         if (queue.length === 0) {
-                            return waitingNext = resolve;
+                            if (error !== undefined) {
+                                reject(error);
+                                return;
+                            }
+                            waitingNext = resolve;
+                            return;
                         }
                         resolve(queue[0]);
                         queue.splice(0, 1);

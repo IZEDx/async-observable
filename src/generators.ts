@@ -1,6 +1,6 @@
 
 import { IAsyncIterable, polyfillAsyncIterator } from "./asynciterable";
-import { IObserver } from "./observer";
+import { Observer } from "./observer";
 
 polyfillAsyncIterator();
 const nop = () => {};
@@ -10,19 +10,18 @@ export function callback<T, K>(val: T, fn: (val: T, callback: (err: any, v: K) =
     return create(observer => {
         fn(val, (err, v) => {
             if (!!err) {
-                (observer.error || nop)(err);
+                observer.error(err);
             } else {
                 observer.next(v);
             }
-            (observer.complete || nop)();
+            observer.complete();
         });
     });
 }
 
-export async function* interval(ms: number): IAsyncIterable<number> {
-    let c = 0;
-    while (true) {
-        yield c++;
+export async function* interval(ms: number, max: number): IAsyncIterable<number> {
+    for (let i = 0; i < max; i++) {
+        yield i;
         await sleep(ms);
     }
 }
@@ -50,17 +49,19 @@ export async function* range(from: number, to: number, step: number = 1): IAsync
 
 /**
  * Creates an async iterable from a callback using an Observer.
- * @param {(observer: IObserver<T>) => void} creator Callback to create the iterable.
+ * @param {(observer: Observer<T>) => void} creator Callback to create the iterable.
  */
-export function create<T>(creator: (observer: IObserver<T>) => void): IAsyncIterable<T> {
+export function create<T>(creator: (observer: Observer<T>) => void): IAsyncIterable<T> {
     return {
         [Symbol.asyncIterator]() {
             let waitingNext: null | ((data: IteratorResult<T>) => void) = null;
             let waitingError: (err: Error) => void;
             const queue: IteratorResult<T>[] = [];
+            let error: Error|undefined;
 
-            creator({
+            creator(new Observer({
                 next(value: T) {
+                    if (error !== undefined) return;
                     if (waitingNext === null) {
                         queue.push({value, done: false});
                     } else {
@@ -70,6 +71,7 @@ export function create<T>(creator: (observer: IObserver<T>) => void): IAsyncIter
                 },
                 // Any hack because TypeScript doesn't like IteratorResults with undefined values.
                 complete() {
+                    if (error !== undefined) return;
                     if (waitingNext === null) {
                         queue.push({value: undefined, done: true} as any);
                     } else {
@@ -78,17 +80,27 @@ export function create<T>(creator: (observer: IObserver<T>) => void): IAsyncIter
                     }
                 },
                 error(err: Error) {
-                    if (waitingError !== undefined) {
+                    if (waitingError === undefined) {
+                        error = err;
+                    } else {
                         waitingError(err);
                     }
                 }
-            });
+            }));
 
             return {
                 next(): Promise<IteratorResult<T>> {
                     return new Promise<IteratorResult<T>>((resolve, reject) => {
                         waitingError = reject;
-                        if (queue.length === 0) { return waitingNext = resolve; }
+                        if (queue.length === 0) { 
+                            if (error !== undefined) {
+                                reject(error);
+                                return;
+                            }
+
+                            waitingNext = resolve; 
+                            return;
+                        }
 
                         resolve(queue[0]);
                         queue.splice(0, 1);
