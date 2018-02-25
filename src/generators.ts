@@ -3,7 +3,6 @@ import { IAsyncIterable, polyfillAsyncIterator } from "./asynciterable";
 import { Observer } from "./observer";
 
 polyfillAsyncIterator();
-const nop = () => {};
 const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 export function callback<T, K>(val: T, fn: (val: T, callback: (err: any, v: K) => any) => any): IAsyncIterable<K> {

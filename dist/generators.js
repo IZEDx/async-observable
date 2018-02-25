@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const asynciterable_1 = require("./asynciterable");
 const observer_1 = require("./observer");
 asynciterable_1.polyfillAsyncIterator();
-const nop = () => { };
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 function callback(val, fn) {
     return create(observer => {
