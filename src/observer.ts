@@ -30,3 +30,5 @@ export class AsyncObserver<T> implements IObserver<T> {
         }
     }
 }
+
+export type ObserverFunction<T> = (observer: AsyncObserver<T>) => void;

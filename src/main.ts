@@ -12,6 +12,6 @@ export function polyfillAsyncIterator() {
 
 polyfillAsyncIterator();
 
-export { Observable } from "./observable";
-export { AsyncObserver, IObserver } from "./observer";
+export * from "./observable";
+export * from "./observer";
 export { Generators, Operators };
