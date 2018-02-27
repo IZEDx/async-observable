@@ -93,8 +93,6 @@ export async function* forEach<T>(input: AsyncIterable<T>, fn: (value: T) => Pro
  */
 export async function* flatMap<T, K, O extends AsyncIterable<K>>(input: AsyncIterable<T>, fn: (value: T) => O): AsyncIterable<K> {
     for await(const data of input) {
-        for await(const resultData of fn(data)) {
-            yield resultData;
-        }
+        yield* fn(data);
     }
 }
