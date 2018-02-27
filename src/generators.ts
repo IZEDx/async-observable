@@ -1,5 +1,5 @@
 
-import { AsyncObserver } from "./observer";
+import { AsyncObserver, ObserverFunction } from "./observer";
 
 const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -54,7 +54,7 @@ export async function* range(from: number, to: number, step: number = 1): AsyncI
  * Creates an async iterable from a callback using an Observer.
  * @param {(observer: Observer<T>) => void} creator Callback to create the iterable.
  */
-export function create<T>(creator: (observer: AsyncObserver<T>) => void): AsyncIterable<T> {
+export function create<T>(creator: ObserverFunction<T>): AsyncIterable<T> {
     return {
         [Symbol.asyncIterator]() {
             let waitingNext: null | ((data: IteratorResult<T>) => void) = null;
