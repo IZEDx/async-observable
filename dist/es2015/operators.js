@@ -16,6 +16,11 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
     function reject(value) { resume("throw", value); }
     function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
 };
+var __asyncDelegator = (this && this.__asyncDelegator) || function (o) {
+    var i, p;
+    return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
+    function verb(n, f) { if (o[n]) i[n] = function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; }; }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 function map(input, fn) {
     return __asyncGenerator(this, arguments, function* map_1() {
@@ -137,29 +142,17 @@ function flatMap(input, fn) {
         try {
             for (var input_6 = __asyncValues(input), input_6_1; input_6_1 = yield __await(input_6.next()), !input_6_1.done;) {
                 const data = yield __await(input_6_1.value);
-                try {
-                    for (var _a = __asyncValues(fn(data)), _b; _b = yield __await(_a.next()), !_b.done;) {
-                        const resultData = yield __await(_b.value);
-                        yield resultData;
-                    }
-                }
-                catch (e_6_1) { e_6 = { error: e_6_1 }; }
-                finally {
-                    try {
-                        if (_b && !_b.done && (_c = _a.return)) yield __await(_c.call(_a));
-                    }
-                    finally { if (e_6) throw e_6.error; }
-                }
+                yield __await(yield* __asyncDelegator(__asyncValues(fn(data))));
             }
         }
-        catch (e_7_1) { e_7 = { error: e_7_1 }; }
+        catch (e_6_1) { e_6 = { error: e_6_1 }; }
         finally {
             try {
-                if (input_6_1 && !input_6_1.done && (_d = input_6.return)) yield __await(_d.call(input_6));
+                if (input_6_1 && !input_6_1.done && (_a = input_6.return)) yield __await(_a.call(input_6));
             }
-            finally { if (e_7) throw e_7.error; }
+            finally { if (e_6) throw e_6.error; }
         }
-        var e_7, _d, e_6, _c;
+        var e_6, _a;
     });
 }
 exports.flatMap = flatMap;

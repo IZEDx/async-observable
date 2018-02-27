@@ -1,22 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class Observer {
+class AsyncObserver {
     constructor(obs) {
         this.obs = obs;
     }
     next(value) {
         return this.obs.next(value);
     }
-    complete() {
-        if (this.obs.complete) {
-            return this.obs.complete();
+    return() {
+        if (this.obs.return) {
+            return this.obs.return();
         }
     }
-    error(error) {
-        if (this.obs.error) {
-            return this.obs.error(error);
+    throw(error) {
+        if (this.obs.throw) {
+            return this.obs.throw(error);
         }
     }
 }
-exports.Observer = Observer;
+exports.AsyncObserver = AsyncObserver;
 //# sourceMappingURL=observer.js.map

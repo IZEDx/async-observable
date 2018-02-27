@@ -12,20 +12,18 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
     function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const asynciterable_1 = require("./asynciterable");
 const observer_1 = require("./observer");
-asynciterable_1.polyfillAsyncIterator();
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 function callback(val, fn) {
     return create(observer => {
         fn(val, (err, v) => {
             if (!!err) {
-                observer.error(err);
+                observer.throw(err);
             }
             else {
                 observer.next(v);
             }
-            observer.complete();
+            observer.return();
         });
     });
 }
@@ -60,34 +58,34 @@ function create(creator) {
         [Symbol.asyncIterator]() {
             let waitingNext = null;
             let waitingError;
-            const queue = [];
-            let error;
-            creator(new observer_1.Observer({
+            const resultQueue = [];
+            let thrownError;
+            creator(new observer_1.AsyncObserver({
                 next(value) {
-                    if (error !== undefined)
+                    if (thrownError !== undefined)
                         return;
                     if (waitingNext === null) {
-                        queue.push({ value, done: false });
+                        resultQueue.push({ value, done: false });
                     }
                     else {
                         waitingNext({ value, done: false });
                         waitingNext = null;
                     }
                 },
-                complete() {
-                    if (error !== undefined)
+                return() {
+                    if (thrownError !== undefined)
                         return;
                     if (waitingNext === null) {
-                        queue.push({ value: undefined, done: true });
+                        resultQueue.push({ value: undefined, done: true });
                     }
                     else {
                         waitingNext({ value: undefined, done: true });
                         waitingNext = null;
                     }
                 },
-                error(err) {
+                throw(err) {
                     if (waitingError === undefined) {
-                        error = err;
+                        thrownError = err;
                     }
                     else {
                         waitingError(err);
@@ -98,16 +96,16 @@ function create(creator) {
                 next() {
                     return new Promise((resolve, reject) => {
                         waitingError = reject;
-                        if (queue.length === 0) {
-                            if (error !== undefined) {
-                                reject(error);
+                        if (resultQueue.length === 0) {
+                            if (thrownError !== undefined) {
+                                reject(thrownError);
                                 return;
                             }
                             waitingNext = resolve;
                             return;
                         }
-                        resolve(queue[0]);
-                        queue.splice(0, 1);
+                        resolve(resultQueue[0]);
+                        resultQueue.splice(0, 1);
                     });
                 }
             };

@@ -40,8 +40,8 @@ class Observable {
     }
     static listen(stream) {
         return new Observable(AsyncGenerators.create(observer => {
-            stream.on("error", err => observer.error !== undefined ? observer.error(err) : null);
-            stream.on("close", hadError => observer.complete !== undefined ? observer.complete() : null);
+            stream.on("error", err => observer.throw(err));
+            stream.on("close", hadError => observer.return());
             stream.on("data", data => observer.next(data));
         }));
     }
@@ -51,17 +51,23 @@ class Observable {
     do(fn) {
         return this.forEach(fn);
     }
-    pipe(consumer) {
-        return this.subscribe(consumer);
-    }
     forEach(fn) {
         return new Observable(AsyncOperators.forEach(this, fn));
     }
+    filter(fn) {
+        return new Observable(AsyncOperators.filter(this, fn));
+    }
+    map(fn) {
+        return new Observable(AsyncOperators.map(this, fn));
+    }
+    flatMap(fn) {
+        return new Observable(AsyncOperators.flatMap(this, fn));
+    }
     subscribe(subscriber) {
         return __awaiter(this, void 0, void 0, function* () {
-            let observer = subscriber instanceof observer_1.Observer
+            let observer = subscriber instanceof observer_1.AsyncObserver
                 ? subscriber
-                : new observer_1.Observer(subscriber);
+                : new observer_1.AsyncObserver(subscriber);
             try {
                 try {
                     for (var _a = __asyncValues(this), _b; _b = yield _a.next(), !_b.done;) {
@@ -81,26 +87,17 @@ class Observable {
                 }
             }
             catch (e) {
-                const r = observer.error(e);
+                const r = observer.throw(e);
                 if (r instanceof Promise) {
                     yield r;
                 }
             }
-            const r = observer.complete();
+            const r = observer.return();
             if (r instanceof Promise) {
                 yield r;
             }
             var e_1, _c;
         });
-    }
-    filter(fn) {
-        return new Observable(AsyncOperators.filter(this, fn));
-    }
-    map(fn) {
-        return new Observable(AsyncOperators.map(this, fn));
-    }
-    flatMap(fn) {
-        return new Observable(AsyncOperators.flatMap(this, fn));
     }
 }
 exports.Observable = Observable;
