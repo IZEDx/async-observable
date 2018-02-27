@@ -7,7 +7,8 @@
   "scripts": {
     "build": "./node_modules/.bin/tsc",
     "watch": "npm run build -- --watch",
-    "test": "./node_modules/.bin/mocha -p tests -r ts-node/register tests/*.ts"
+    "test": "./node_modules/.bin/mocha -p tests -r ts-node/register tests/*.ts",
+    "docs": "./node_modules/.bin/typedoc --name async-observable --readme README.md --module commonjs --target ES5 --excludeExternals --out docs --theme default src/"
   },
   "repository": {
     "type": "git",
@@ -25,7 +26,8 @@
     "chai": "^4.1.2",
     "mocha": "^4.0.1",
     "ts-node": "^4.0.1",
-    "typescript": "^2.7"
+    "typescript": "^2.7",
+    "typedoc": "^0.9.0"
   },
   "dependencies": {
     "@types/node": "^8.0.53"
