@@ -1,6 +1,5 @@
 
-import { IAsyncIterable } from "./asynciterable";
-import { IObserver, Observer } from "./observer";
+import { IObserver, AsyncObserver } from "./observer";
 import * as AsyncGenerators from "./generators";
 import * as AsyncOperators from "./operators";
 
@@ -20,18 +19,20 @@ import * as AsyncOperators from "./operators";
  *  }
  * ```
  */
-export class Observable<T> {
+export class Observable<T> implements AsyncIterable<T> {
     public [Symbol.asyncIterator]: () => AsyncIterator<T>;
 
-    constructor(ai: IAsyncIterable<T>) {
+    constructor(ai: AsyncIterable<T>) {
         Object.assign(this, ai);
     }
+
+    // Generators 
 
     public static of<T>(...values: (T|Promise<T>)[]): Observable<T> {
         return new Observable(AsyncGenerators.of(...values));
     }
 
-    public static create<T>(creator: (observer: IObserver<T>) => void): Observable<T> {
+    public static create<T>(creator: (observer: AsyncObserver<T>) => void): Observable<T> {
         return new Observable(AsyncGenerators.create(creator));
     }
 
@@ -54,11 +55,13 @@ export class Observable<T> {
 
     public static listen<T>(stream: NodeJS.ReadableStream): Observable<T> {
         return new Observable(AsyncGenerators.create(observer => {
-            stream.on("error", err      => observer.error !== undefined ? observer.error(err) : null);
-            stream.on("close", hadError => observer.complete !== undefined ? observer.complete() : null);
+            stream.on("error", err      => observer.throw(err));
+            stream.on("close", hadError => observer.return());
             stream.on("data",  data     => observer.next(data));
         }));
     }
+
+    // Operators
 
     public checkValid(): Observable<T> {
         return this.filter(v => v !== undefined && v !== null);
@@ -68,37 +71,8 @@ export class Observable<T> {
         return this.forEach(fn);
     }
 
-    public pipe(consumer: IObserver<T>): Promise<void> {
-        return this.subscribe(consumer);
-    }
-
     public forEach(fn: (value: T) => Promise<void>|void): Observable<T> {
         return new Observable(AsyncOperators.forEach(this, fn));
-    }
-
-    public async subscribe(subscriber: Observer<T>|IObserver<T>): Promise<void> {
-        let observer: Observer<T> = subscriber instanceof Observer
-            ?   subscriber
-            :   new Observer(subscriber);
-            
-        try {
-            for await(const data of this) {
-                const r = observer.next(data);
-                if (r instanceof Promise) {
-                    await r;
-                }
-            }
-        } catch (e) {
-            const r = observer.error(e);
-            if (r instanceof Promise) {
-                await r;
-            }
-        }
-
-        const r = observer.complete();
-        if (r instanceof Promise) {
-            await r;
-        }
     }
 
     public filter(fn: (value: T) => Promise<boolean>|boolean): Observable<T> {
@@ -111,6 +85,33 @@ export class Observable<T> {
 
     public flatMap<K>(fn: (value: T) => Observable<K>): Observable<K> {
         return new Observable(AsyncOperators.flatMap(this, fn));
+    }
+
+    // Subscriber
+
+    public async subscribe(subscriber: AsyncObserver<T>|IObserver<T>): Promise<void> {
+        let observer: AsyncObserver<T> = subscriber instanceof AsyncObserver
+            ?   subscriber
+            :   new AsyncObserver(subscriber);
+            
+        try {
+            for await(const data of this) {
+                const r = observer.next(data);
+                if (r instanceof Promise) {
+                    await r;
+                }
+            }
+        } catch (e) {
+            const r = observer.throw(e);
+            if (r instanceof Promise) {
+                await r;
+            }
+        }
+
+        const r = observer.return();
+        if (r instanceof Promise) {
+            await r;
+        }
     }
 
 }

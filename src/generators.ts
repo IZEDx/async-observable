@@ -1,24 +1,27 @@
 
-import { IAsyncIterable, polyfillAsyncIterator } from "./asynciterable";
-import { Observer } from "./observer";
+import { AsyncObserver } from "./observer";
 
-polyfillAsyncIterator();
 const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-export function callback<T, K>(val: T, fn: (val: T, callback: (err: any, v: K) => any) => any): IAsyncIterable<K> {
+/**
+ * An AsyncGenerator is a function that creates an AsyncIterable
+ */
+export type AsyncGenerator<T> = (args: any[]) => AsyncIterable<T>;
+
+export function callback<T, K>(val: T, fn: (val: T, callback: (err: any, v: K) => any) => any): AsyncIterable<K> {
     return create(observer => {
         fn(val, (err, v) => {
             if (!!err) {
-                observer.error(err);
+                observer.throw(err);
             } else {
                 observer.next(v);
             }
-            observer.complete();
+            observer.return();
         });
     });
 }
 
-export async function* interval(ms: number, max: number): IAsyncIterable<number> {
+export async function* interval(ms: number, max: number): AsyncIterable<number> {
     for (let i = 0; i < max; i++) {
         yield i;
         await sleep(ms);
@@ -28,7 +31,7 @@ export async function* interval(ms: number, max: number): IAsyncIterable<number>
 /**
  * Creates an async iterable that emits the given arguments and awaits them in case they're promises.
  */
-export async function* of<T>(...values: (T|Promise<T>)[]): IAsyncIterable<T> {
+export async function* of<T>(...values: (T|Promise<T>)[]): AsyncIterable<T> {
     for (const v of values) {
         yield (v instanceof Promise) ? await v : v;
     }
@@ -40,47 +43,48 @@ export async function* of<T>(...values: (T|Promise<T>)[]): IAsyncIterable<T> {
  * @param {number} to Endnumber
  * @param {number} step Stepsize
  */
-export async function* range(from: number, to: number, step: number = 1): IAsyncIterable<number> {
+export async function* range(from: number, to: number, step: number = 1): AsyncIterable<number> {
     for (let i = from; i < to; i += step) {
         yield i;
     }
 }
 
+
 /**
  * Creates an async iterable from a callback using an Observer.
  * @param {(observer: Observer<T>) => void} creator Callback to create the iterable.
  */
-export function create<T>(creator: (observer: Observer<T>) => void): IAsyncIterable<T> {
+export function create<T>(creator: (observer: AsyncObserver<T>) => void): AsyncIterable<T> {
     return {
         [Symbol.asyncIterator]() {
             let waitingNext: null | ((data: IteratorResult<T>) => void) = null;
             let waitingError: (err: Error) => void;
-            const queue: IteratorResult<T>[] = [];
-            let error: Error|undefined;
+            const resultQueue: IteratorResult<T>[] = [];
+            let thrownError: Error|undefined;
 
-            creator(new Observer({
+            creator(new AsyncObserver({
                 next(value: T) {
-                    if (error !== undefined) return;
+                    if (thrownError !== undefined) return;
                     if (waitingNext === null) {
-                        queue.push({value, done: false});
+                        resultQueue.push({value, done: false});
                     } else {
                         waitingNext({value, done: false});
                         waitingNext = null;
                     }
                 },
                 // Any hack because TypeScript doesn't like IteratorResults with undefined values.
-                complete() {
-                    if (error !== undefined) return;
+                return() {
+                    if (thrownError !== undefined) return;
                     if (waitingNext === null) {
-                        queue.push({value: undefined, done: true} as any);
+                        resultQueue.push({value: undefined, done: true} as any);
                     } else {
                         waitingNext({value: undefined, done: true} as any);
                         waitingNext = null;
                     }
                 },
-                error(err: Error) {
+                throw(err: Error) {
                     if (waitingError === undefined) {
-                        error = err;
+                        thrownError = err;
                     } else {
                         waitingError(err);
                     }
@@ -88,12 +92,12 @@ export function create<T>(creator: (observer: Observer<T>) => void): IAsyncItera
             }));
 
             return {
-                next(): Promise<IteratorResult<T>> {
+                next() {
                     return new Promise<IteratorResult<T>>((resolve, reject) => {
                         waitingError = reject;
-                        if (queue.length === 0) { 
-                            if (error !== undefined) {
-                                reject(error);
+                        if (resultQueue.length === 0) { 
+                            if (thrownError !== undefined) {
+                                reject(thrownError);
                                 return;
                             }
 
@@ -101,8 +105,8 @@ export function create<T>(creator: (observer: Observer<T>) => void): IAsyncItera
                             return;
                         }
 
-                        resolve(queue[0]);
-                        queue.splice(0, 1);
+                        resolve(resultQueue[0]);
+                        resultQueue.splice(0, 1);
                     });
                 }
             };

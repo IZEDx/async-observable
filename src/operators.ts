@@ -1,17 +1,16 @@
-import { IAsyncIterable } from "./asynciterable";
 
 /**
  * An AsyncOperator is a function that takes an AsyncIterable and returns an AsyncIterable.
  */
-export type AsyncOperator<T, K = T> = (input: IAsyncIterable<T>, ...args: any[]) => IAsyncIterable<K>;
+export type AsyncOperator<T, K = T> = (input: AsyncIterable<T>, ...args: any[]) => AsyncIterable<K>;
 
 /**
  * Maps all incoming values using the given mapping function.
- * @param {IAsyncIterable<T>} input Input
+ * @param {AsyncIterable<T>} input Input
  * @param {(value: T) => Promise<K>} fn Mapping function
- * @return {IAsyncIterable<K>} Output
+ * @return {AsyncIterable<K>} Output
  */
-export async function* map<T, K>(input: IAsyncIterable<T>, fn: (value: T) => Promise<K>|K): IAsyncIterable<K> {
+export async function* map<T, K>(input: AsyncIterable<T>, fn: (value: T) => Promise<K>|K): AsyncIterable<K> {
     for await(const data of input) {
         const mapped = fn(data);
         yield mapped instanceof Promise ? await mapped : mapped;
@@ -20,11 +19,11 @@ export async function* map<T, K>(input: IAsyncIterable<T>, fn: (value: T) => Pro
 
 /**
  * Splits all incoming values at the given seperator.
- * @param {IAsyncIterable<string>} input Input
+ * @param {AsyncIterable<string>} input Input
  * @param {string} seperator Seperator to split at
- * @return {IAsyncIterable<string>} Output
+ * @return {AsyncIterable<string>} Output
  */
-export async function* split(input: IAsyncIterable<string>, seperator: string): IAsyncIterable<string> {
+export async function* split(input: AsyncIterable<string>, seperator: string): AsyncIterable<string> {
     for await(const data of input) {
         for (const part of data.split(seperator)) {
             yield part;
@@ -34,11 +33,11 @@ export async function* split(input: IAsyncIterable<string>, seperator: string): 
 
 /**
  * Buffers and splits incoming data using the given seperator.
- * @param {IAsyncIterable<string>} input Input
+ * @param {AsyncIterable<string>} input Input
  * @param {string} seperator Seperator to split and buffer at
- * @return {IAsyncIterable<string>} Output
+ * @return {AsyncIterable<string>} Output
  */
-export async function* buffer(input: IAsyncIterable<string>, seperator: string): IAsyncIterable<string> {
+export async function* buffer(input: AsyncIterable<string>, seperator: string): AsyncIterable<string> {
     let buff = "";
 
     for await(const data of input) {
@@ -55,11 +54,11 @@ export async function* buffer(input: IAsyncIterable<string>, seperator: string):
 
 /**
  * Filters incoming value using the given predicate.
- * @param {IAsyncIterable<T>} input Input
+ * @param {AsyncIterable<T>} input Input
  * @param {(value: T) => Promise<boolean>} fn Predicate
- * @return {IAsyncIterable<T>} Output
+ * @return {AsyncIterable<T>} Output
  */
-export async function* filter<T>(input: IAsyncIterable<T>, fn: (value: T) => Promise<boolean>|boolean): IAsyncIterable<T> {
+export async function* filter<T>(input: AsyncIterable<T>, fn: (value: T) => Promise<boolean>|boolean): AsyncIterable<T> {
     for await(const data of input) {
         const check = fn(data);
         if (check instanceof Promise ? await check : check) {
@@ -70,11 +69,11 @@ export async function* filter<T>(input: IAsyncIterable<T>, fn: (value: T) => Pro
 
 /**
  * Runs and awaits the given async function and then passes the values along.
- * @param {IAsyncIterable<T>} input Input
+ * @param {AsyncIterable<T>} input Input
  * @param {(value: T) => Promise<void>} fn Function
- * @return {IAsyncIterable<T>} Output
+ * @return {AsyncIterable<T>} Output
  */
-export async function* forEach<T>(input: IAsyncIterable<T>, fn: (value: T) => Promise<void>|void): IAsyncIterable<T> {
+export async function* forEach<T>(input: AsyncIterable<T>, fn: (value: T) => Promise<void>|void): AsyncIterable<T> {
     for await(const data of input) {
         const run = fn(data);
         if (run instanceof Promise) {
@@ -88,11 +87,11 @@ export async function* forEach<T>(input: IAsyncIterable<T>, fn: (value: T) => Pr
 
 /**
  * Creates an Observable of every incoming value using the given Function and then yields the values of that.
- * @param {IAsyncIterable<T>} input Input
+ * @param {AsyncIterable<T>} input Input
  * @param {(value: T) => Observable<K>} fn Function
- * @return {IAsyncIterable<K>} Output
+ * @return {AsyncIterable<K>} Output
  */
-export async function* flatMap<T, K, O extends IAsyncIterable<K>>(input: IAsyncIterable<T>, fn: (value: T) => O): IAsyncIterable<K> {
+export async function* flatMap<T, K, O extends AsyncIterable<K>>(input: AsyncIterable<T>, fn: (value: T) => O): AsyncIterable<K> {
     for await(const data of input) {
         for await(const resultData of fn(data)) {
             yield resultData;

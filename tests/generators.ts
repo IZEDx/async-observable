@@ -1,10 +1,7 @@
 
 import { expect } from "chai";
-import { polyfillAsyncIterator } from "../src/asynciterable";
-import * as Generators from "../src/generators";
+import { Generators } from "../src/main";
 import { when, time, sleep } from "./utils";
-
-polyfillAsyncIterator();
 
 const cbfunc = (v: any, cb: (err: any, v: boolean) => void) => {
     if (v === undefined) {
@@ -106,7 +103,7 @@ describe("AsyncGenerators", () => {
                 observer.next(0);
                 observer.next(1);
                 observer.next(2);
-                observer.complete();
+                observer.return();
             });
 
             let c = 0;
@@ -120,8 +117,8 @@ describe("AsyncGenerators", () => {
             const it = Generators.create(observer => {
                 observer.next(0);
                 observer.next(1);
-                observer.error(new Error("random error"));
-                observer.complete();
+                observer.throw(new Error("random error"));
+                observer.return();
             });
 
             let c = 0;
