@@ -11,7 +11,7 @@
     "build-es2016": "npm run build -- --target es2016 --outDir dist/es2016",
     "build-es2017": "npm run build -- --target es2017 --outDir dist/es2017",
     "build-esnext": "npm run build -- --target esnext --outDir dist/esnext",
-    "build-all": "npm run build-es5 & npm run build-es2015 & npm run build-es2016 & npm run build-es2017",
+    "build-all": "npm run build-es5 & npm run build-es2015 & npm run build-es2016 & npm run build-es2017 & npm run build-esnext",
     "watch": "npm run build -- --watch",
     "test": "./node_modules/.bin/mocha -p tests -r ts-node/register tests/*.ts",
     "docs": "./node_modules/.bin/typedoc --name async-observable --readme README.md --module commonjs --target ES5 --excludeExternals --out docs --theme default src/"
@@ -32,7 +32,7 @@
     "chai": "^4.1.2",
     "mocha": "^4.0.1",
     "ts-node": "^4.0.1",
-    "typedoc": "^0.9.0",
+    "typedoc": "^0.10.0",
     "typescript": "^2.7"
   },
   "dependencies": {
