@@ -3,6 +3,13 @@ import { IObserver, AsyncObserver } from "./observer";
 import * as AsyncGenerators from "./generators";
 import * as AsyncOperators from "./operators";
 
+export interface ReadableStream {
+    on(event: "error", cb: (err: Error) => void): void;
+    on(event: "close", cb: (hadErr: boolean) => void): void;
+    on(event: "data", cb: (data: any) => void): void;
+    on(event: string, cb: Function): void;
+}
+
 /**
  * An Observable produces an asynchronous stream of values once iterated over or subscribed on.
  * Observable methods operate on the asynchronous stream of values as they come by returning a new observable.
@@ -53,7 +60,8 @@ export class Observable<T> implements AsyncIterable<T> {
         return new Observable(AsyncGenerators.range(from, to, step));
     }
 
-    public static listen<T>(stream: NodeJS.ReadableStream): Observable<T> {
+
+    public static listen<T>(stream: ReadableStream): Observable<T> {
         return new Observable(AsyncGenerators.create(observer => {
             stream.on("error", err      => observer.throw(err));
             stream.on("close", hadError => observer.return());
