@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "target": "esnext",
-        "module": "esnext",
+        "target": "es2015",
+        "module": "umd",
         "moduleResolution": "node",
         "sourceMap": true,
         "pretty": true,
@@ -17,7 +17,7 @@
             "dom",
             "esnext"
         ],
-        "outDir": "dist/esnext"
+        "outDir": "dist/es2015-umd"
     },
     "exclude": [
         "node_modules",
