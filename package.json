@@ -18,7 +18,7 @@
     "build-all": "rm -rf dist && (npm run build-es5-umd & npm run build-es5-esm & npm run build-es2015-umd & npm run build-es2015-esm & npm run build-esnext)",
     "watch": "npm run build -- --watch",
     "test": "./node_modules/.bin/mocha -p tests -r ts-node/register tests/*.ts",
-    "docs": "rm -rf docs && ./node_modules/.bin/typedoc --name async-observable --readme README.md --module commonjs --target ES5 --excludeExternals --out docs --theme default src/"
+    "docs": "rm -rf docs && ./node_modules/.bin/typedoc --name async-observable --readme README.md --module commonjs --target ES5 --excludeExternals --out docs --theme default src/ && touch docs/.nojekyll"
   },
   "repository": {
     "type": "git",
