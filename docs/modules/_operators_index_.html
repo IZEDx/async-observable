@@ -3,17 +3,17 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>async-observable</title>
+	<title>&quot;operators/index&quot; | async-observable</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/main.css">
+	<link rel="stylesheet" href="../assets/css/main.css">
 </head>
 <body>
 <header>
 	<div class="tsd-page-toolbar">
 		<div class="container">
 			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
 					<div class="field">
 						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
 						<input id="tsd-search-field" type="text" />
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">async-observable</a>
+					<a href="../index.html" class="title">async-observable</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -51,59 +51,137 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="globals.html">Globals</a>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="_operators_index_.html">&quot;operators/index&quot;</a>
 				</li>
 			</ul>
-			<h1> async-observable</h1>
+			<h1>External module &quot;operators/index&quot;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<div class="tsd-panel tsd-typography">
-				<p><a href="https://travis-ci.org/IZEDx/async-observable"><img src="https://travis-ci.org/IZEDx/async-observable.svg?branch=master" alt="Build Status"></a></p>
-				<h1 id="async-observable">async-observable</h1>
-				<p>Observable implementation using TypeScript, async/await and AsyncIterables.</p>
-			</div>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Type aliases</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_operators_index_.html#asyncoperator" class="tsd-kind-icon">Async<wbr>Operator</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Object literals</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-object-literal tsd-parent-kind-external-module tsd-is-not-exported"><a href="_operators_index_.html#operators" class="tsd-kind-icon">Operators</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
+					<a name="asyncoperator" class="tsd-anchor"></a>
+					<h3>Async<wbr>Operator</h3>
+					<div class="tsd-signature tsd-kind-icon">Async<wbr>Operator<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/eea6da3/src/operators/index.ts#L5">operators/index.ts:5</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>An AsyncOperator is a function that takes an AsyncIterable and returns an AsyncIterable.</p>
+						</div>
+					</div>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-siganture">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias tsd-is-not-exported">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AsyncIterable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, <span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AsyncIterable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">&gt;</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>input: <span class="tsd-signature-type">AsyncIterable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+											</li>
+											<li>
+												<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>args: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">AsyncIterable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">&gt;</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Object literals</h2>
+				<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="operators" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> Operators</h3>
+					<div class="tsd-signature tsd-kind-icon">Operators<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/eea6da3/src/operators/index.ts#L14">operators/index.ts:14</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
 					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
+						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_index_.html">"index"</a>
+						<a href="_index_.html">"index"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_observable_.html">"observable"</a>
+						<a href="_observable_.html">"observable"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_observer_.html">"observer"</a>
+						<a href="_observer_.html">"observer"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_operators_aggregators_.html">"operators/aggregators"</a>
+						<a href="_operators_aggregators_.html">"operators/aggregators"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_operators_filters_.html">"operators/filters"</a>
+						<a href="_operators_filters_.html">"operators/filters"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_operators_generators_.html">"operators/generators"</a>
+						<a href="_operators_generators_.html">"operators/generators"</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="_operators_index_.html">"operators/index"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_operators_index_.html">"operators/index"</a>
+						<a href="_operators_transformators_.html">"operators/transformators"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_operators_transformators_.html">"operators/transformators"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_operators_utilities_.html">"operators/utilities"</a>
+						<a href="_operators_utilities_.html">"operators/utilities"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_operators_index_.html#asyncoperator" class="tsd-kind-icon">Async<wbr>Operator</a>
+					</li>
+					<li class=" tsd-kind-object-literal tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_operators_index_.html#operators" class="tsd-kind-icon">Operators</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
@@ -172,7 +250,7 @@
 	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
-<script src="assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>
