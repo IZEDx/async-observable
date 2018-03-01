@@ -88,8 +88,8 @@ describe("AsyncGenerators", () => {
 
         it("yields all expected values", when(async () => {
             let c = 0;
-            for await(const i of Generators.range(0, 10)) {
-                expect(i).to.equal(c++);
+            for await(const i of Generators.range(1, 10)) {
+                expect(i).to.equal(++c);
             }
             expect(c).to.equal(10);
         }));

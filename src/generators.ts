@@ -54,7 +54,7 @@ export async function* of<T>(...values: (T|Promise<T>)[]): AsyncIterable<T> {
  * @param {number} step Stepsize
  */
 export async function* range(from: number, to: number, step: number = 1): AsyncIterable<number> {
-    for (let i = from; i < to; i += step) {
+    for (let i = from; i <= to; i += step) {
         yield i;
     }
 }
