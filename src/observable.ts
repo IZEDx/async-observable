@@ -1,7 +1,6 @@
 
 import { IObserver, AsyncObserver } from "./observer";
-import * as AsyncGenerators from "./generators";
-import * as AsyncOperators from "./operators";
+import { Generators as AsyncGenerators, Operators as AsyncOperators } from "./operators/";
 
 export interface ReadableStream {
     on(event: "error", cb: (err: Error) => void): void;

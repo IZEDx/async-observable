@@ -11,7 +11,7 @@ const cbfunc = (v: any, cb: (err: any, v: boolean) => void) => {
     }
 }
 
-describe("AsyncGenerators", () => {
+describe("Generators", () => {
 
     describe("callback", () => {
 

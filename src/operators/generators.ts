@@ -1,5 +1,5 @@
 
-import { AsyncObserver, ObserverFunction } from "./observer";
+import { AsyncObserver, ObserverFunction } from "../observer";
 
 const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 
