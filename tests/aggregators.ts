@@ -1,26 +1,22 @@
 
-import { expect } from "chai";
+import * as test from "tape";
 import { Generators, Aggregators } from "../src";
 import { when } from "./utils";
 
-describe("Aggregate Operators", () => {
 
-    describe("count", () => {
+test("count should count all elements", when(async assert => {
+    const numbers = Generators.range(1,7);
+    const countit = Aggregators.count(numbers);
+    const itresult = await countit[Symbol.asyncIterator]().next();
+    assert.equal(itresult.value, 7);
+    assert.end();
+}));
 
-        it("should count all elements", when(async () => {
-            const numbers = Generators.range(1,7);
-            const countit = Aggregators.count(numbers);
-            const itresult = await countit[Symbol.asyncIterator]().next();
-            expect(itresult.value).to.equal(7);
-        }));
+test("count should apply predicate", when(async assert => {
+    const numbers = Generators.range(1,7);
+    const countit = Aggregators.count(numbers, i => i % 2 === 1);
+    const itresult = await countit[Symbol.asyncIterator]().next();
+    assert.equal(itresult.value, 4);
+    assert.end();
+}));
 
-        it("should apply predicate", when(async () => {
-            const numbers = Generators.range(1,7);
-            const countit = Aggregators.count(numbers, i => i % 2 === 1);
-            const itresult = await countit[Symbol.asyncIterator]().next();
-            expect(itresult.value).to.equal(4);
-        }));
-
-    });
-
-});

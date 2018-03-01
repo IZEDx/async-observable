@@ -17,7 +17,8 @@
     "build-esnext": "npm run build -- --target esnext --module esnext --outDir dist/esnext",
     "build-all": "rm -rf dist && (npm run build-es5-umd & npm run build-es5-esm & npm run build-es2015-umd & npm run build-es2015-esm & npm run build-esnext)",
     "watch": "npm run build -- --watch",
-    "test": "./node_modules/.bin/mocha -p tests -r ts-node/register tests/*.ts",
+    "test": "./node_modules/.bin/nyc --reporter=lcov --require ts-node/register ./node_modules/.bin/tape tests/**/*.ts | tap-spec",
+    "coverage": "./node_modules/.bin/nyc report --reporter=text",
     "docs": "rm -rf docs && ./node_modules/.bin/typedoc --name async-observable --readme README.md --module commonjs --target ES5 --excludeExternals --out docs --theme default src/ && touch docs/.nojekyll"
   },
   "repository": {
@@ -30,11 +31,19 @@
     "url": "https://github.com/IZEDx/async-observable/issues"
   },
   "homepage": "https://github.com/IZEDx/async-observable#readme",
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "extension": [
+      ".ts"
+    ]
+  },
   "devDependencies": {
-    "@types/chai": "^4.0.10",
-    "@types/mocha": "^2.2.44",
-    "chai": "^4.1.2",
-    "mocha": "^4.0.1",
+    "@types/tape": "^4.2.31",
+    "nyc": "^11.4.1",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.9.0",
     "ts-node": "^4.0.1",
     "typedoc": "^0.10.0",
     "typescript": "^2.7"
