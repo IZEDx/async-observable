@@ -16,12 +16,12 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./observer"], factory);
+        define(["require", "exports", "../observer"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    const observer_1 = require("./observer");
+    const observer_1 = require("../observer");
     const sleep = (ms) => new Promise(res => setTimeout(res, ms));
     function callback(val, fn) {
         return create(observer => {

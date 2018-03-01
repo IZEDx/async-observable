@@ -39,8 +39,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     return m ? m.call(o) : typeof __values === "function" ? __values(o) : o[Symbol.iterator]();
 };
 import { AsyncObserver } from "./observer";
-import * as AsyncGenerators from "./generators";
-import * as AsyncOperators from "./operators";
+import { Generators as AsyncGenerators, Operators as AsyncOperators } from "./operators/";
 var Observable = (function () {
     function Observable(ai) {
         Object.assign(this, ai);

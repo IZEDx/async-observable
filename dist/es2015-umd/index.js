@@ -4,7 +4,7 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./generators", "./operators", "./observable", "./observer"], factory);
+        define(["require", "exports", "./observable", "./observer", "./operators/"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -12,10 +12,6 @@
         for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
     }
     Object.defineProperty(exports, "__esModule", { value: true });
-    const Generators = require("./generators");
-    exports.Generators = Generators;
-    const Operators = require("./operators");
-    exports.Operators = Operators;
     function polyfillSymbol(name) {
         Symbol[name] = Symbol[name] !== undefined ? Symbol[name] : Symbol.for(name);
     }
@@ -26,5 +22,6 @@
     polyfillAsyncIterator();
     __export(require("./observable"));
     __export(require("./observer"));
+    __export(require("./operators/"));
 });
 //# sourceMappingURL=index.js.map

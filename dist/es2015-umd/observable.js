@@ -17,26 +17,25 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./observer", "./generators", "./operators"], factory);
+        define(["require", "exports", "./observer", "./operators/"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     const observer_1 = require("./observer");
-    const AsyncGenerators = require("./generators");
-    const AsyncOperators = require("./operators");
+    const _1 = require("./operators/");
     class Observable {
         constructor(ai) {
             Object.assign(this, ai);
         }
         static of(...values) {
-            return new Observable(AsyncGenerators.of(...values));
+            return new Observable(_1.Generators.of(...values));
         }
         static create(creator) {
-            return new Observable(AsyncGenerators.create(creator));
+            return new Observable(_1.Generators.create(creator));
         }
         static interval(ms) {
-            return new Observable(AsyncGenerators.create(observer => {
+            return new Observable(_1.Generators.create(observer => {
                 let i = 0;
                 setInterval(() => {
                     observer.next(i);
@@ -45,10 +44,10 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
             }));
         }
         static range(from, to, step = 1) {
-            return new Observable(AsyncGenerators.range(from, to, step));
+            return new Observable(_1.Generators.range(from, to, step));
         }
         static listen(stream) {
-            return new Observable(AsyncGenerators.create(observer => {
+            return new Observable(_1.Generators.create(observer => {
                 stream.on("error", err => observer.throw(err));
                 stream.on("close", hadError => observer.return());
                 stream.on("data", data => observer.next(data));
@@ -61,16 +60,16 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
             return this.forEach(fn);
         }
         forEach(fn) {
-            return new Observable(AsyncOperators.forEach(this, fn));
+            return new Observable(_1.Operators.forEach(this, fn));
         }
         filter(fn) {
-            return new Observable(AsyncOperators.filter(this, fn));
+            return new Observable(_1.Operators.filter(this, fn));
         }
         map(fn) {
-            return new Observable(AsyncOperators.map(this, fn));
+            return new Observable(_1.Operators.map(this, fn));
         }
         flatMap(fn) {
-            return new Observable(AsyncOperators.flatMap(this, fn));
+            return new Observable(_1.Operators.flatMap(this, fn));
         }
         subscribe(subscriber) {
             return __awaiter(this, void 0, void 0, function* () {

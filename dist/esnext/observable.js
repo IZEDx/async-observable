@@ -1,6 +1,5 @@
 import { AsyncObserver } from "./observer";
-import * as AsyncGenerators from "./generators";
-import * as AsyncOperators from "./operators";
+import { Generators as AsyncGenerators, Operators as AsyncOperators } from "./operators/";
 export class Observable {
     constructor(ai) {
         Object.assign(this, ai);

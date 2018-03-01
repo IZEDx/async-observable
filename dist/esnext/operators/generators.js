@@ -1,4 +1,4 @@
-import { AsyncObserver } from "./observer";
+import { AsyncObserver } from "../observer";
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 export function callback(val, fn) {
     return create(observer => {

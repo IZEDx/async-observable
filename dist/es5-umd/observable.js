@@ -44,14 +44,13 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./observer", "./generators", "./operators"], factory);
+        define(["require", "exports", "./observer", "./operators/"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var observer_1 = require("./observer");
-    var AsyncGenerators = require("./generators");
-    var AsyncOperators = require("./operators");
+    var _1 = require("./operators/");
     var Observable = (function () {
         function Observable(ai) {
             Object.assign(this, ai);
@@ -61,13 +60,13 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 values[_i] = arguments[_i];
             }
-            return new Observable(AsyncGenerators.of.apply(AsyncGenerators, values));
+            return new Observable(_1.Generators.of.apply(_1.Generators, values));
         };
         Observable.create = function (creator) {
-            return new Observable(AsyncGenerators.create(creator));
+            return new Observable(_1.Generators.create(creator));
         };
         Observable.interval = function (ms) {
-            return new Observable(AsyncGenerators.create(function (observer) {
+            return new Observable(_1.Generators.create(function (observer) {
                 var i = 0;
                 setInterval(function () {
                     observer.next(i);
@@ -77,10 +76,10 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
         };
         Observable.range = function (from, to, step) {
             if (step === void 0) { step = 1; }
-            return new Observable(AsyncGenerators.range(from, to, step));
+            return new Observable(_1.Generators.range(from, to, step));
         };
         Observable.listen = function (stream) {
-            return new Observable(AsyncGenerators.create(function (observer) {
+            return new Observable(_1.Generators.create(function (observer) {
                 stream.on("error", function (err) { return observer.throw(err); });
                 stream.on("close", function (hadError) { return observer.return(); });
                 stream.on("data", function (data) { return observer.next(data); });
@@ -93,16 +92,16 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
             return this.forEach(fn);
         };
         Observable.prototype.forEach = function (fn) {
-            return new Observable(AsyncOperators.forEach(this, fn));
+            return new Observable(_1.Operators.forEach(this, fn));
         };
         Observable.prototype.filter = function (fn) {
-            return new Observable(AsyncOperators.filter(this, fn));
+            return new Observable(_1.Operators.filter(this, fn));
         };
         Observable.prototype.map = function (fn) {
-            return new Observable(AsyncOperators.map(this, fn));
+            return new Observable(_1.Operators.map(this, fn));
         };
         Observable.prototype.flatMap = function (fn) {
-            return new Observable(AsyncOperators.flatMap(this, fn));
+            return new Observable(_1.Operators.flatMap(this, fn));
         };
         Observable.prototype.subscribe = function (subscriber) {
             return __awaiter(this, void 0, void 0, function () {
