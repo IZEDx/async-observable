@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -39,10 +38,9 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     var m = o[Symbol.asyncIterator];
     return m ? m.call(o) : typeof __values === "function" ? __values(o) : o[Symbol.iterator]();
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var observer_1 = require("./observer");
-var AsyncGenerators = require("./generators");
-var AsyncOperators = require("./operators");
+import { AsyncObserver } from "./observer";
+import * as AsyncGenerators from "./generators";
+import * as AsyncOperators from "./operators";
 var Observable = (function () {
     function Observable(ai) {
         Object.assign(this, ai);
@@ -101,9 +99,9 @@ var Observable = (function () {
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
-                        observer = subscriber instanceof observer_1.AsyncObserver
+                        observer = subscriber instanceof AsyncObserver
                             ? subscriber
-                            : new observer_1.AsyncObserver(subscriber);
+                            : new AsyncObserver(subscriber);
                         _d.label = 1;
                     case 1:
                         _d.trys.push([1, 16, , 19]);
@@ -166,5 +164,5 @@ var Observable = (function () {
     };
     return Observable;
 }());
-exports.Observable = Observable;
+export { Observable };
 //# sourceMappingURL=observable.js.map

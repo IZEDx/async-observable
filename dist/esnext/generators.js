@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const observer_1 = require("./observer");
+import { AsyncObserver } from "./observer";
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
-function callback(val, fn) {
+export function callback(val, fn) {
     return create(observer => {
         fn(val, (err, v) => {
             if (!!err) {
@@ -15,34 +13,30 @@ function callback(val, fn) {
         });
     });
 }
-exports.callback = callback;
-async function* interval(ms, max) {
+export async function* interval(ms, max) {
     for (let i = 0; i < max; i++) {
         yield i;
         await sleep(ms);
     }
 }
-exports.interval = interval;
-async function* of(...values) {
+export async function* of(...values) {
     for (const v of values) {
         yield (v instanceof Promise) ? await v : v;
     }
 }
-exports.of = of;
-async function* range(from, to, step = 1) {
-    for (let i = from; i < to; i += step) {
+export async function* range(from, to, step = 1) {
+    for (let i = from; i <= to; i += step) {
         yield i;
     }
 }
-exports.range = range;
-function create(creator) {
+export function create(creator) {
     return {
         [Symbol.asyncIterator]() {
             let waitingNext = null;
             let waitingError;
             const resultQueue = [];
             let thrownError;
-            creator(new observer_1.AsyncObserver({
+            creator(new AsyncObserver({
                 next(value) {
                     if (thrownError !== undefined)
                         return;
@@ -94,5 +88,4 @@ function create(creator) {
         }
     };
 }
-exports.create = create;
 //# sourceMappingURL=generators.js.map

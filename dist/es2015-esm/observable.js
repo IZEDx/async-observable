@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -12,11 +11,10 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     var m = o[Symbol.asyncIterator];
     return m ? m.call(o) : typeof __values === "function" ? __values(o) : o[Symbol.iterator]();
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const observer_1 = require("./observer");
-const AsyncGenerators = require("./generators");
-const AsyncOperators = require("./operators");
-class Observable {
+import { AsyncObserver } from "./observer";
+import * as AsyncGenerators from "./generators";
+import * as AsyncOperators from "./operators";
+export class Observable {
     constructor(ai) {
         Object.assign(this, ai);
     }
@@ -65,9 +63,9 @@ class Observable {
     }
     subscribe(subscriber) {
         return __awaiter(this, void 0, void 0, function* () {
-            let observer = subscriber instanceof observer_1.AsyncObserver
+            let observer = subscriber instanceof AsyncObserver
                 ? subscriber
-                : new observer_1.AsyncObserver(subscriber);
+                : new AsyncObserver(subscriber);
             try {
                 try {
                     for (var _a = __asyncValues(this), _b; _b = yield _a.next(), !_b.done;) {
@@ -100,5 +98,4 @@ class Observable {
         });
     }
 }
-exports.Observable = Observable;
 //# sourceMappingURL=observable.js.map

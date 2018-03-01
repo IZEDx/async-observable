@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class AsyncObserver {
+export class AsyncObserver {
     constructor(obs) {
         this.obs = obs;
     }
@@ -18,5 +16,4 @@ class AsyncObserver {
         }
     }
 }
-exports.AsyncObserver = AsyncObserver;
 //# sourceMappingURL=observer.js.map

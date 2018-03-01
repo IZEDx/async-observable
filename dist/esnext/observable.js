@@ -1,9 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const observer_1 = require("./observer");
-const AsyncGenerators = require("./generators");
-const AsyncOperators = require("./operators");
-class Observable {
+import { AsyncObserver } from "./observer";
+import * as AsyncGenerators from "./generators";
+import * as AsyncOperators from "./operators";
+export class Observable {
     constructor(ai) {
         Object.assign(this, ai);
     }
@@ -51,9 +49,9 @@ class Observable {
         return new Observable(AsyncOperators.flatMap(this, fn));
     }
     async subscribe(subscriber) {
-        let observer = subscriber instanceof observer_1.AsyncObserver
+        let observer = subscriber instanceof AsyncObserver
             ? subscriber
-            : new observer_1.AsyncObserver(subscriber);
+            : new AsyncObserver(subscriber);
         try {
             for await (const data of this) {
                 const r = observer.next(data);
@@ -74,5 +72,4 @@ class Observable {
         }
     }
 }
-exports.Observable = Observable;
 //# sourceMappingURL=observable.js.map

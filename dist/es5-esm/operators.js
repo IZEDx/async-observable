@@ -1,4 +1,3 @@
-"use strict";
 var __generator = (this && this.__generator) || function (thisArg, body) {
     var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
     return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
@@ -58,8 +57,7 @@ var __values = (this && this.__values) || function (o) {
         }
     };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-function map(input, fn) {
+export function map(input, fn) {
     return __asyncGenerator(this, arguments, function map_1() {
         var input_1, input_1_1, data, mapped, _a, e_1_1, e_1, _b;
         return __generator(this, function (_c) {
@@ -110,8 +108,7 @@ function map(input, fn) {
         });
     });
 }
-exports.map = map;
-function split(input, seperator) {
+export function split(input, seperator) {
     return __asyncGenerator(this, arguments, function split_1() {
         var input_2, input_2_1, data, _i, _a, part, e_2_1, e_2, _b;
         return __generator(this, function (_c) {
@@ -161,8 +158,7 @@ function split(input, seperator) {
         });
     });
 }
-exports.split = split;
-function buffer(input, seperator) {
+export function buffer(input, seperator) {
     return __asyncGenerator(this, arguments, function buffer_1() {
         var buff, input_3, input_3_1, data, idx, e_3_1, e_3, _a;
         return __generator(this, function (_b) {
@@ -214,8 +210,7 @@ function buffer(input, seperator) {
         });
     });
 }
-exports.buffer = buffer;
-function filter(input, fn) {
+export function filter(input, fn) {
     return __asyncGenerator(this, arguments, function filter_1() {
         var input_4, input_4_1, data, check, _a, e_4_1, e_4, _b;
         return __generator(this, function (_c) {
@@ -268,8 +263,7 @@ function filter(input, fn) {
         });
     });
 }
-exports.filter = filter;
-function forEach(input, fn) {
+export function forEach(input, fn) {
     return __asyncGenerator(this, arguments, function forEach_1() {
         var input_5, input_5_1, data, run_1, e_5_1, e_5, _a;
         return __generator(this, function (_b) {
@@ -320,8 +314,7 @@ function forEach(input, fn) {
         });
     });
 }
-exports.forEach = forEach;
-function flatMap(input, fn) {
+export function flatMap(input, fn) {
     return __asyncGenerator(this, arguments, function flatMap_1() {
         var input_6, input_6_1, data, e_6_1, e_6, _a;
         return __generator(this, function (_b) {
@@ -364,5 +357,179 @@ function flatMap(input, fn) {
         });
     });
 }
-exports.flatMap = flatMap;
+export function count(input, predicate) {
+    return __asyncGenerator(this, arguments, function count_1() {
+        var c, _a, _b, _1, e_7_1, e_7, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    c = 0;
+                    _d.label = 1;
+                case 1:
+                    _d.trys.push([1, 7, 8, 13]);
+                    _a = __asyncValues(!!predicate ? filter(input, predicate) : input);
+                    _d.label = 2;
+                case 2: return [4, __await(_a.next())];
+                case 3:
+                    if (!(_b = _d.sent(), !_b.done)) return [3, 6];
+                    return [4, __await(_b.value)];
+                case 4:
+                    _1 = _d.sent();
+                    c++;
+                    _d.label = 5;
+                case 5: return [3, 2];
+                case 6: return [3, 13];
+                case 7:
+                    e_7_1 = _d.sent();
+                    e_7 = { error: e_7_1 };
+                    return [3, 13];
+                case 8:
+                    _d.trys.push([8, , 11, 12]);
+                    if (!(_b && !_b.done && (_c = _a.return))) return [3, 10];
+                    return [4, __await(_c.call(_a))];
+                case 9:
+                    _d.sent();
+                    _d.label = 10;
+                case 10: return [3, 12];
+                case 11:
+                    if (e_7) throw e_7.error;
+                    return [7];
+                case 12: return [7];
+                case 13: return [4, c];
+                case 14:
+                    _d.sent();
+                    return [2];
+            }
+        });
+    });
+}
+export function max(input, comparer) {
+    return __asyncGenerator(this, arguments, function max_1() {
+        var max, input_7, input_7_1, val, e_8_1, e_8, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    if (!comparer) {
+                        comparer = function (a, b) {
+                            if (typeof a !== "number" || typeof b !== "number") {
+                                throw TypeError("Input must be number when no comparer is given.");
+                            }
+                            return a > b ? 1 : -1;
+                        };
+                    }
+                    max = null;
+                    _b.label = 1;
+                case 1:
+                    _b.trys.push([1, 7, 8, 13]);
+                    input_7 = __asyncValues(input);
+                    _b.label = 2;
+                case 2: return [4, __await(input_7.next())];
+                case 3:
+                    if (!(input_7_1 = _b.sent(), !input_7_1.done)) return [3, 6];
+                    return [4, __await(input_7_1.value)];
+                case 4:
+                    val = _b.sent();
+                    if (max === null) {
+                        max = val;
+                    }
+                    else {
+                        max = comparer(val, max) > 0 ? val : max;
+                    }
+                    _b.label = 5;
+                case 5: return [3, 2];
+                case 6: return [3, 13];
+                case 7:
+                    e_8_1 = _b.sent();
+                    e_8 = { error: e_8_1 };
+                    return [3, 13];
+                case 8:
+                    _b.trys.push([8, , 11, 12]);
+                    if (!(input_7_1 && !input_7_1.done && (_a = input_7.return))) return [3, 10];
+                    return [4, __await(_a.call(input_7))];
+                case 9:
+                    _b.sent();
+                    _b.label = 10;
+                case 10: return [3, 12];
+                case 11:
+                    if (e_8) throw e_8.error;
+                    return [7];
+                case 12: return [7];
+                case 13:
+                    if (!(max !== null)) return [3, 15];
+                    return [4, max];
+                case 14:
+                    _b.sent();
+                    _b.label = 15;
+                case 15: return [2];
+            }
+        });
+    });
+}
+export function min(input, comparer) {
+    return __asyncGenerator(this, arguments, function min_1() {
+        var origcomp_1;
+        return __generator(this, function (_a) {
+            if (!comparer) {
+                comparer = function (a, b) {
+                    if (typeof a !== "number" || typeof b !== "number") {
+                        throw TypeError("Input must be number when no comparer is given.");
+                    }
+                    return a < b ? 1 : -1;
+                };
+            }
+            else {
+                origcomp_1 = comparer;
+                comparer = function (a, b) {
+                    return origcomp_1(a, b) < 0 ? 1 : -1;
+                };
+            }
+            return [2, max(input, comparer)];
+        });
+    });
+}
+export function reduce(input, fn, seed) {
+    return __asyncGenerator(this, arguments, function reduce_1() {
+        var acc, input_8, input_8_1, curr, e_9_1, e_9, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    acc = seed;
+                    _b.label = 1;
+                case 1:
+                    _b.trys.push([1, 8, 9, 14]);
+                    input_8 = __asyncValues(input);
+                    _b.label = 2;
+                case 2: return [4, __await(input_8.next())];
+                case 3:
+                    if (!(input_8_1 = _b.sent(), !input_8_1.done)) return [3, 7];
+                    return [4, __await(input_8_1.value)];
+                case 4:
+                    curr = _b.sent();
+                    return [4, acc = fn(acc, curr)];
+                case 5:
+                    _b.sent();
+                    _b.label = 6;
+                case 6: return [3, 2];
+                case 7: return [3, 14];
+                case 8:
+                    e_9_1 = _b.sent();
+                    e_9 = { error: e_9_1 };
+                    return [3, 14];
+                case 9:
+                    _b.trys.push([9, , 12, 13]);
+                    if (!(input_8_1 && !input_8_1.done && (_a = input_8.return))) return [3, 11];
+                    return [4, __await(_a.call(input_8))];
+                case 10:
+                    _b.sent();
+                    _b.label = 11;
+                case 11: return [3, 13];
+                case 12:
+                    if (e_9) throw e_9.error;
+                    return [7];
+                case 13: return [7];
+                case 14: return [2];
+            }
+        });
+    });
+}
 //# sourceMappingURL=operators.js.map

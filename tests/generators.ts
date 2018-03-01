@@ -1,6 +1,6 @@
 
 import { expect } from "chai";
-import { Generators } from "../src/main";
+import { Generators } from "../src";
 import { when, time, sleep } from "./utils";
 
 const cbfunc = (v: any, cb: (err: any, v: boolean) => void) => {

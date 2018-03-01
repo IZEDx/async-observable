@@ -1,4 +1,3 @@
-"use strict";
 var __generator = (this && this.__generator) || function (thisArg, body) {
     var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
     return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
@@ -38,10 +37,9 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
     function reject(value) { resume("throw", value); }
     function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var observer_1 = require("./observer");
+import { AsyncObserver } from "./observer";
 var sleep = function (ms) { return new Promise(function (res) { return setTimeout(res, ms); }); };
-function callback(val, fn) {
+export function callback(val, fn) {
     return create(function (observer) {
         fn(val, function (err, v) {
             if (!!err) {
@@ -54,8 +52,7 @@ function callback(val, fn) {
         });
     });
 }
-exports.callback = callback;
-function interval(ms, max) {
+export function interval(ms, max) {
     return __asyncGenerator(this, arguments, function interval_1() {
         var i;
         return __generator(this, function (_a) {
@@ -80,8 +77,7 @@ function interval(ms, max) {
         });
     });
 }
-exports.interval = interval;
-function of() {
+export function of() {
     var values = [];
     for (var _i = 0; _i < arguments.length; _i++) {
         values[_i] = arguments[_i];
@@ -116,8 +112,7 @@ function of() {
         });
     });
 }
-exports.of = of;
-function range(from, to, step) {
+export function range(from, to, step) {
     if (step === void 0) { step = 1; }
     return __asyncGenerator(this, arguments, function range_1() {
         var i;
@@ -127,7 +122,7 @@ function range(from, to, step) {
                     i = from;
                     _a.label = 1;
                 case 1:
-                    if (!(i < to)) return [3, 4];
+                    if (!(i <= to)) return [3, 4];
                     return [4, i];
                 case 2:
                     _a.sent();
@@ -140,15 +135,14 @@ function range(from, to, step) {
         });
     });
 }
-exports.range = range;
-function create(creator) {
+export function create(creator) {
     return _a = {},
         _a[Symbol.asyncIterator] = function () {
             var waitingNext = null;
             var waitingError;
             var resultQueue = [];
             var thrownError;
-            creator(new observer_1.AsyncObserver({
+            creator(new AsyncObserver({
                 next: function (value) {
                     if (thrownError !== undefined)
                         return;
@@ -201,5 +195,4 @@ function create(creator) {
         _a;
     var _a;
 }
-exports.create = create;
 //# sourceMappingURL=generators.js.map

@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var AsyncObserver = (function () {
     function AsyncObserver(obs) {
         this.obs = obs;
@@ -19,5 +17,5 @@ var AsyncObserver = (function () {
     };
     return AsyncObserver;
 }());
-exports.AsyncObserver = AsyncObserver;
+export { AsyncObserver };
 //# sourceMappingURL=observer.js.map

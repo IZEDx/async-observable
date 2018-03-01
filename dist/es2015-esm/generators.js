@@ -1,4 +1,3 @@
-"use strict";
 var __await = (this && this.__await) || function (v) { return this instanceof __await ? (this.v = v, this) : new __await(v); }
 var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _arguments, generator) {
     if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
@@ -11,10 +10,9 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
     function reject(value) { resume("throw", value); }
     function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const observer_1 = require("./observer");
+import { AsyncObserver } from "./observer";
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
-function callback(val, fn) {
+export function callback(val, fn) {
     return create(observer => {
         fn(val, (err, v) => {
             if (!!err) {
@@ -27,8 +25,7 @@ function callback(val, fn) {
         });
     });
 }
-exports.callback = callback;
-function interval(ms, max) {
+export function interval(ms, max) {
     return __asyncGenerator(this, arguments, function* interval_1() {
         for (let i = 0; i < max; i++) {
             yield i;
@@ -36,31 +33,28 @@ function interval(ms, max) {
         }
     });
 }
-exports.interval = interval;
-function of(...values) {
+export function of(...values) {
     return __asyncGenerator(this, arguments, function* of_1() {
         for (const v of values) {
             yield (v instanceof Promise) ? yield __await(v) : v;
         }
     });
 }
-exports.of = of;
-function range(from, to, step = 1) {
+export function range(from, to, step = 1) {
     return __asyncGenerator(this, arguments, function* range_1() {
-        for (let i = from; i < to; i += step) {
+        for (let i = from; i <= to; i += step) {
             yield i;
         }
     });
 }
-exports.range = range;
-function create(creator) {
+export function create(creator) {
     return {
         [Symbol.asyncIterator]() {
             let waitingNext = null;
             let waitingError;
             const resultQueue = [];
             let thrownError;
-            creator(new observer_1.AsyncObserver({
+            creator(new AsyncObserver({
                 next(value) {
                     if (thrownError !== undefined)
                         return;
@@ -112,5 +106,4 @@ function create(creator) {
         }
     };
 }
-exports.create = create;
 //# sourceMappingURL=generators.js.map

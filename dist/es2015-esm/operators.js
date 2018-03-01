@@ -1,4 +1,3 @@
-"use strict";
 var __asyncValues = (this && this.__asyncValues) || function (o) {
     if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
     var m = o[Symbol.asyncIterator];
@@ -21,8 +20,7 @@ var __asyncDelegator = (this && this.__asyncDelegator) || function (o) {
     return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
     function verb(n, f) { if (o[n]) i[n] = function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; }; }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-function map(input, fn) {
+export function map(input, fn) {
     return __asyncGenerator(this, arguments, function* map_1() {
         try {
             for (var input_1 = __asyncValues(input), input_1_1; input_1_1 = yield __await(input_1.next()), !input_1_1.done;) {
@@ -41,8 +39,7 @@ function map(input, fn) {
         var e_1, _a;
     });
 }
-exports.map = map;
-function split(input, seperator) {
+export function split(input, seperator) {
     return __asyncGenerator(this, arguments, function* split_1() {
         try {
             for (var input_2 = __asyncValues(input), input_2_1; input_2_1 = yield __await(input_2.next()), !input_2_1.done;) {
@@ -62,8 +59,7 @@ function split(input, seperator) {
         var e_2, _a;
     });
 }
-exports.split = split;
-function buffer(input, seperator) {
+export function buffer(input, seperator) {
     return __asyncGenerator(this, arguments, function* buffer_1() {
         let buff = "";
         try {
@@ -88,8 +84,7 @@ function buffer(input, seperator) {
         var e_3, _a;
     });
 }
-exports.buffer = buffer;
-function filter(input, fn) {
+export function filter(input, fn) {
     return __asyncGenerator(this, arguments, function* filter_1() {
         try {
             for (var input_4 = __asyncValues(input), input_4_1; input_4_1 = yield __await(input_4.next()), !input_4_1.done;) {
@@ -110,8 +105,7 @@ function filter(input, fn) {
         var e_4, _a;
     });
 }
-exports.filter = filter;
-function forEach(input, fn) {
+export function forEach(input, fn) {
     return __asyncGenerator(this, arguments, function* forEach_1() {
         try {
             for (var input_5 = __asyncValues(input), input_5_1; input_5_1 = yield __await(input_5.next()), !input_5_1.done;) {
@@ -136,8 +130,7 @@ function forEach(input, fn) {
         var e_5, _a;
     });
 }
-exports.forEach = forEach;
-function flatMap(input, fn) {
+export function flatMap(input, fn) {
     return __asyncGenerator(this, arguments, function* flatMap_1() {
         try {
             for (var input_6 = __asyncValues(input), input_6_1; input_6_1 = yield __await(input_6.next()), !input_6_1.done;) {
@@ -155,5 +148,97 @@ function flatMap(input, fn) {
         var e_6, _a;
     });
 }
-exports.flatMap = flatMap;
+export function count(input, predicate) {
+    return __asyncGenerator(this, arguments, function* count_1() {
+        let c = 0;
+        try {
+            for (var _a = __asyncValues(!!predicate ? filter(input, predicate) : input), _b; _b = yield __await(_a.next()), !_b.done;) {
+                const _ = yield __await(_b.value);
+                c++;
+            }
+        }
+        catch (e_7_1) { e_7 = { error: e_7_1 }; }
+        finally {
+            try {
+                if (_b && !_b.done && (_c = _a.return)) yield __await(_c.call(_a));
+            }
+            finally { if (e_7) throw e_7.error; }
+        }
+        yield c;
+        var e_7, _c;
+    });
+}
+export function max(input, comparer) {
+    return __asyncGenerator(this, arguments, function* max_1() {
+        if (!comparer) {
+            comparer = (a, b) => {
+                if (typeof a !== "number" || typeof b !== "number") {
+                    throw TypeError("Input must be number when no comparer is given.");
+                }
+                return a > b ? 1 : -1;
+            };
+        }
+        let max = null;
+        try {
+            for (var input_7 = __asyncValues(input), input_7_1; input_7_1 = yield __await(input_7.next()), !input_7_1.done;) {
+                const val = yield __await(input_7_1.value);
+                if (max === null) {
+                    max = val;
+                }
+                else {
+                    max = comparer(val, max) > 0 ? val : max;
+                }
+            }
+        }
+        catch (e_8_1) { e_8 = { error: e_8_1 }; }
+        finally {
+            try {
+                if (input_7_1 && !input_7_1.done && (_a = input_7.return)) yield __await(_a.call(input_7));
+            }
+            finally { if (e_8) throw e_8.error; }
+        }
+        if (max !== null) {
+            yield max;
+        }
+        var e_8, _a;
+    });
+}
+export function min(input, comparer) {
+    return __asyncGenerator(this, arguments, function* min_1() {
+        if (!comparer) {
+            comparer = (a, b) => {
+                if (typeof a !== "number" || typeof b !== "number") {
+                    throw TypeError("Input must be number when no comparer is given.");
+                }
+                return a < b ? 1 : -1;
+            };
+        }
+        else {
+            const origcomp = comparer;
+            comparer = (a, b) => {
+                return origcomp(a, b) < 0 ? 1 : -1;
+            };
+        }
+        return max(input, comparer);
+    });
+}
+export function reduce(input, fn, seed) {
+    return __asyncGenerator(this, arguments, function* reduce_1() {
+        let acc = seed;
+        try {
+            for (var input_8 = __asyncValues(input), input_8_1; input_8_1 = yield __await(input_8.next()), !input_8_1.done;) {
+                const curr = yield __await(input_8_1.value);
+                yield acc = fn(acc, curr);
+            }
+        }
+        catch (e_9_1) { e_9 = { error: e_9_1 }; }
+        finally {
+            try {
+                if (input_8_1 && !input_8_1.done && (_a = input_8.return)) yield __await(_a.call(input_8));
+            }
+            finally { if (e_9) throw e_9.error; }
+        }
+        var e_9, _a;
+    });
+}
 //# sourceMappingURL=operators.js.map

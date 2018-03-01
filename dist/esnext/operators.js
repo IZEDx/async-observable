@@ -1,21 +1,17 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-async function* map(input, fn) {
+export async function* map(input, fn) {
     for await (const data of input) {
         const mapped = fn(data);
         yield mapped instanceof Promise ? await mapped : mapped;
     }
 }
-exports.map = map;
-async function* split(input, seperator) {
+export async function* split(input, seperator) {
     for await (const data of input) {
         for (const part of data.split(seperator)) {
             yield part;
         }
     }
 }
-exports.split = split;
-async function* buffer(input, seperator) {
+export async function* buffer(input, seperator) {
     let buff = "";
     for await (const data of input) {
         buff += data;
@@ -27,8 +23,7 @@ async function* buffer(input, seperator) {
         }
     }
 }
-exports.buffer = buffer;
-async function* filter(input, fn) {
+export async function* filter(input, fn) {
     for await (const data of input) {
         const check = fn(data);
         if (check instanceof Promise ? await check : check) {
@@ -36,8 +31,7 @@ async function* filter(input, fn) {
         }
     }
 }
-exports.filter = filter;
-async function* forEach(input, fn) {
+export async function* forEach(input, fn) {
     for await (const data of input) {
         const run = fn(data);
         if (run instanceof Promise) {
@@ -49,11 +43,61 @@ async function* forEach(input, fn) {
         yield data;
     }
 }
-exports.forEach = forEach;
-async function* flatMap(input, fn) {
+export async function* flatMap(input, fn) {
     for await (const data of input) {
         yield* fn(data);
     }
 }
-exports.flatMap = flatMap;
+export async function* count(input, predicate) {
+    let c = 0;
+    for await (const _ of !!predicate ? filter(input, predicate) : input) {
+        c++;
+    }
+    yield c;
+}
+export async function* max(input, comparer) {
+    if (!comparer) {
+        comparer = (a, b) => {
+            if (typeof a !== "number" || typeof b !== "number") {
+                throw TypeError("Input must be number when no comparer is given.");
+            }
+            return a > b ? 1 : -1;
+        };
+    }
+    let max = null;
+    for await (const val of input) {
+        if (max === null) {
+            max = val;
+        }
+        else {
+            max = comparer(val, max) > 0 ? val : max;
+        }
+    }
+    if (max !== null) {
+        yield max;
+    }
+}
+export async function* min(input, comparer) {
+    if (!comparer) {
+        comparer = (a, b) => {
+            if (typeof a !== "number" || typeof b !== "number") {
+                throw TypeError("Input must be number when no comparer is given.");
+            }
+            return a < b ? 1 : -1;
+        };
+    }
+    else {
+        const origcomp = comparer;
+        comparer = (a, b) => {
+            return origcomp(a, b) < 0 ? 1 : -1;
+        };
+    }
+    return max(input, comparer);
+}
+export async function* reduce(input, fn, seed) {
+    let acc = seed;
+    for await (const curr of input) {
+        yield acc = fn(acc, curr);
+    }
+}
 //# sourceMappingURL=operators.js.map

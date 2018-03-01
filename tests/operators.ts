@@ -1,6 +1,6 @@
 
 import { expect } from "chai";
-import { Generators, Operators } from "../src/main";
+import { Generators, Operators } from "../src";
 import { when } from "./utils";
 
 describe("AsyncOperators", () => {
@@ -26,5 +26,5 @@ describe("AsyncOperators", () => {
         });
 
     });
-
+    
 });
