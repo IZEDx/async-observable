@@ -8,6 +8,11 @@ const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
  */
 export type AsyncGenerator<T> = (args: any[]) => AsyncIterable<T>;
 
+/**
+ * Creates an AsyncIterable from a Node-like Callback Function
+ * @param {T} val Value to be passed to fn
+ * @param {(err: any, v: K) => any} fn Node-like Callback Function to be turned into an AsyncIterable 
+ */
 export function callback<T, K>(val: T, fn: (val: T, callback: (err: any, v: K) => any) => any): AsyncIterable<K> {
     return create(observer => {
         fn(val, (err, v) => {
@@ -21,6 +26,11 @@ export function callback<T, K>(val: T, fn: (val: T, callback: (err: any, v: K) =
     });
 }
 
+/**
+ * Creates an AsyncIterable that yields increments every given milliseconds for the given times
+ * @param {number} ms Interval 
+ * @param {number} max Count
+ */
 export async function* interval(ms: number, max: number): AsyncIterable<number> {
     for (let i = 0; i < max; i++) {
         yield i;
