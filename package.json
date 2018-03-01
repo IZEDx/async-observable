@@ -7,7 +7,7 @@
   "main": "dist/es2015-umd/index.js",
   "es2015": "dist/es2015-esm/index.js",
   "esnext": "dist/esnext/index.js",
-  "types": "types/index.d.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "build": "./node_modules/.bin/tsc",
     "build-es5-umd": "npm run build -- --target es5 --module umd --outDir dist/es5-umd",
