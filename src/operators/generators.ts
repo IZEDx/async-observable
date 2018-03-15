@@ -59,6 +59,19 @@ export async function* range(from: number, to: number, step: number = 1): AsyncI
     }
 }
 
+/**
+ * Creates an async iterable that generates the fibonacci sequence.
+ * @param {number|undefined} n Number of iterations, if supposed to end.
+ */
+export async function* fibonacci(n?: number) {
+    let a = 1, b = 1;
+    yield 1;
+    yield 1;
+    while(!n || b < n) {
+        [a, b] = [b, a + b];
+        yield b;
+    }
+}
 
 /**
  * Creates an async iterable from a callback using an Observer.
