@@ -46,7 +46,7 @@
     "tape": "^4.9.0",
     "ts-node": "^4.0.1",
     "typedoc": "^0.10.0",
-    "typescript": "^2.7"
+    "typescript": "^2.8.0-rc"
   },
   "dependencies": {
     "@types/node": "^8.0.53"
