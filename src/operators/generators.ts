@@ -63,13 +63,27 @@ export async function* range(from: number, to: number, step: number = 1): AsyncI
  * Creates an async iterable that generates the fibonacci sequence.
  * @param {number|undefined} n Number of iterations, if supposed to end.
  */
-export async function* fibonacci(n?: number) {
+export async function* fibonacci(n?: number): AsyncIterable<number> {
     let a = 1, b = 1;
     yield 1;
     yield 1;
     while(!n || b < n) {
         [a, b] = [b, a + b];
         yield b;
+    }
+}
+
+/**
+ * Creates an async iterable that generates random numbers between
+ * min (inclusive) and max (exclusive).
+ * If count is not provided, it will endlessly generate numbers, otherwise stop at count.
+ * @param {number} min Minimum value, inclusive. 0 by default. 
+ * @param {number} max Maximum value, exclusive. 1 by default.
+ * @param {number|undefined} count The amount of random numbers to yield, if not provided, infinite.
+ */
+export async function* random(min = 0, max = 1, count: number = Infinity): AsyncIterable<number> {
+    for (let i = 0; i < count; i++) {
+        yield min + Math.random() * (max - min);
     }
 }
 
