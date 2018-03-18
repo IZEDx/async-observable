@@ -13,27 +13,6 @@ export async function* map<T, K>(input: AsyncIterable<T>, fn: (value: T) => Prom
 }
 
 /**
- * Buffers and splits incoming data using the given seperator.
- * @param {AsyncIterable<string>} input Input
- * @param {string} seperator Seperator to split and buffer at
- * @return {AsyncIterable<string>} Output
- */
-export async function* buffer(input: AsyncIterable<string>, seperator: string): AsyncIterable<string> {
-    let buff = "";
-
-    for await(const data of input) {
-        buff += data;
-        let idx = buff.indexOf(seperator);
-
-        while (idx >= 0) {
-            yield buff.substr(0, idx);
-            buff = buff.substr(idx + seperator.length);
-            idx = buff.indexOf(seperator);
-        }
-    }
-}
-
-/**
  * Creates an Observable of every incoming value using the given Function and then yields the values of that.
  * @param {AsyncIterable<T>} input Input
  * @param {(value: T) => Observable<K>} fn Function
