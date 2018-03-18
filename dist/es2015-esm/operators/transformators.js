@@ -39,19 +39,12 @@ export function map(input, fn) {
         var e_1, _a;
     });
 }
-export function buffer(input, seperator) {
-    return __asyncGenerator(this, arguments, function* buffer_1() {
-        let buff = "";
+export function flatMap(input, fn) {
+    return __asyncGenerator(this, arguments, function* flatMap_1() {
         try {
             for (var input_2 = __asyncValues(input), input_2_1; input_2_1 = yield __await(input_2.next()), !input_2_1.done;) {
                 const data = yield __await(input_2_1.value);
-                buff += data;
-                let idx = buff.indexOf(seperator);
-                while (idx >= 0) {
-                    yield buff.substr(0, idx);
-                    buff = buff.substr(idx + seperator.length);
-                    idx = buff.indexOf(seperator);
-                }
+                yield __await(yield* __asyncDelegator(__asyncValues(fn(data))));
             }
         }
         catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -62,24 +55,6 @@ export function buffer(input, seperator) {
             finally { if (e_2) throw e_2.error; }
         }
         var e_2, _a;
-    });
-}
-export function flatMap(input, fn) {
-    return __asyncGenerator(this, arguments, function* flatMap_1() {
-        try {
-            for (var input_3 = __asyncValues(input), input_3_1; input_3_1 = yield __await(input_3.next()), !input_3_1.done;) {
-                const data = yield __await(input_3_1.value);
-                yield __await(yield* __asyncDelegator(__asyncValues(fn(data))));
-            }
-        }
-        catch (e_3_1) { e_3 = { error: e_3_1 }; }
-        finally {
-            try {
-                if (input_3_1 && !input_3_1.done && (_a = input_3.return)) yield __await(_a.call(input_3));
-            }
-            finally { if (e_3) throw e_3.error; }
-        }
-        var e_3, _a;
     });
 }
 //# sourceMappingURL=transformators.js.map

@@ -101,20 +101,14 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
         });
     }
     exports.count = count;
+    var numberComparer = function (a, b) { return a > b ? 1 : -1; };
     function max(input, comparer) {
         return __asyncGenerator(this, arguments, function max_1() {
-            var max, input_1, input_1_1, val, e_2_1, e_2, _a;
+            var comp, max, input_1, input_1_1, val, e_2_1, e_2, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        if (!comparer) {
-                            comparer = function (a, b) {
-                                if (typeof a !== "number" || typeof b !== "number") {
-                                    throw TypeError("Input must be number when no comparer is given.");
-                                }
-                                return a > b ? 1 : -1;
-                            };
-                        }
+                        comp = (comparer || numberComparer);
                         max = null;
                         _b.label = 1;
                     case 1:
@@ -131,7 +125,7 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
                             max = val;
                         }
                         else {
-                            max = comparer(val, max) > 0 ? val : max;
+                            max = comp(val, max) > 0 ? val : max;
                         }
                         _b.label = 5;
                     case 5: return [3, 2];
@@ -166,23 +160,12 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
     exports.max = max;
     function min(input, comparer) {
         return __asyncGenerator(this, arguments, function min_1() {
-            var origcomp_1;
+            var comp;
             return __generator(this, function (_a) {
-                if (!comparer) {
-                    comparer = function (a, b) {
-                        if (typeof a !== "number" || typeof b !== "number") {
-                            throw TypeError("Input must be number when no comparer is given.");
-                        }
-                        return a < b ? 1 : -1;
-                    };
-                }
-                else {
-                    origcomp_1 = comparer;
-                    comparer = function (a, b) {
-                        return origcomp_1(a, b) < 0 ? 1 : -1;
-                    };
-                }
-                return [2, max(input, comparer)];
+                comp = comparer || numberComparer;
+                return [2, max(input, function (a, b) {
+                        return comp(a, b) < 0 ? 1 : -1;
+                    })];
             });
         });
     }

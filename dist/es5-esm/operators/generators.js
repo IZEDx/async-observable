@@ -135,6 +135,57 @@ export function range(from, to, step) {
         });
     });
 }
+export function fibonacci(n) {
+    return __asyncGenerator(this, arguments, function fibonacci_1() {
+        var a, b, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    a = 1, b = 1;
+                    return [4, 1];
+                case 1:
+                    _b.sent();
+                    return [4, 1];
+                case 2:
+                    _b.sent();
+                    _b.label = 3;
+                case 3:
+                    if (!(!n || b < n)) return [3, 5];
+                    _a = [b, a + b], a = _a[0], b = _a[1];
+                    return [4, b];
+                case 4:
+                    _b.sent();
+                    return [3, 3];
+                case 5: return [2];
+            }
+        });
+    });
+}
+export function random(min, max, count) {
+    if (min === void 0) { min = 0; }
+    if (max === void 0) { max = 1; }
+    if (count === void 0) { count = Infinity; }
+    return __asyncGenerator(this, arguments, function random_1() {
+        var i;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    i = 0;
+                    _a.label = 1;
+                case 1:
+                    if (!(i < count)) return [3, 4];
+                    return [4, min + Math.random() * (max - min)];
+                case 2:
+                    _a.sent();
+                    _a.label = 3;
+                case 3:
+                    i++;
+                    return [3, 1];
+                case 4: return [2];
+            }
+        });
+    });
+}
 export function create(creator) {
     return _a = {},
         _a[Symbol.asyncIterator] = function () {

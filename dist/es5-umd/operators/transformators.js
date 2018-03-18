@@ -120,72 +120,19 @@ var __values = (this && this.__values) || function (o) {
         });
     }
     exports.map = map;
-    function buffer(input, seperator) {
-        return __asyncGenerator(this, arguments, function buffer_1() {
-            var buff, input_2, input_2_1, data, idx, e_2_1, e_2, _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        buff = "";
-                        _b.label = 1;
-                    case 1:
-                        _b.trys.push([1, 9, 10, 15]);
-                        input_2 = __asyncValues(input);
-                        _b.label = 2;
-                    case 2: return [4, __await(input_2.next())];
-                    case 3:
-                        if (!(input_2_1 = _b.sent(), !input_2_1.done)) return [3, 8];
-                        return [4, __await(input_2_1.value)];
-                    case 4:
-                        data = _b.sent();
-                        buff += data;
-                        idx = buff.indexOf(seperator);
-                        _b.label = 5;
-                    case 5:
-                        if (!(idx >= 0)) return [3, 7];
-                        return [4, buff.substr(0, idx)];
-                    case 6:
-                        _b.sent();
-                        buff = buff.substr(idx + seperator.length);
-                        idx = buff.indexOf(seperator);
-                        return [3, 5];
-                    case 7: return [3, 2];
-                    case 8: return [3, 15];
-                    case 9:
-                        e_2_1 = _b.sent();
-                        e_2 = { error: e_2_1 };
-                        return [3, 15];
-                    case 10:
-                        _b.trys.push([10, , 13, 14]);
-                        if (!(input_2_1 && !input_2_1.done && (_a = input_2.return))) return [3, 12];
-                        return [4, __await(_a.call(input_2))];
-                    case 11:
-                        _b.sent();
-                        _b.label = 12;
-                    case 12: return [3, 14];
-                    case 13:
-                        if (e_2) throw e_2.error;
-                        return [7];
-                    case 14: return [7];
-                    case 15: return [2];
-                }
-            });
-        });
-    }
-    exports.buffer = buffer;
     function flatMap(input, fn) {
         return __asyncGenerator(this, arguments, function flatMap_1() {
-            var input_3, input_3_1, data, e_3_1, e_3, _a;
+            var input_2, input_2_1, data, e_2_1, e_2, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 8, 9, 14]);
-                        input_3 = __asyncValues(input);
+                        input_2 = __asyncValues(input);
                         _b.label = 1;
-                    case 1: return [4, __await(input_3.next())];
+                    case 1: return [4, __await(input_2.next())];
                     case 2:
-                        if (!(input_3_1 = _b.sent(), !input_3_1.done)) return [3, 7];
-                        return [4, __await(input_3_1.value)];
+                        if (!(input_2_1 = _b.sent(), !input_2_1.done)) return [3, 7];
+                        return [4, __await(input_2_1.value)];
                     case 3:
                         data = _b.sent();
                         return [5, __values(__asyncDelegator(__asyncValues(fn(data))))];
@@ -196,19 +143,19 @@ var __values = (this && this.__values) || function (o) {
                     case 6: return [3, 1];
                     case 7: return [3, 14];
                     case 8:
-                        e_3_1 = _b.sent();
-                        e_3 = { error: e_3_1 };
+                        e_2_1 = _b.sent();
+                        e_2 = { error: e_2_1 };
                         return [3, 14];
                     case 9:
                         _b.trys.push([9, , 12, 13]);
-                        if (!(input_3_1 && !input_3_1.done && (_a = input_3.return))) return [3, 11];
-                        return [4, __await(_a.call(input_3))];
+                        if (!(input_2_1 && !input_2_1.done && (_a = input_2.return))) return [3, 11];
+                        return [4, __await(_a.call(input_2))];
                     case 10:
                         _b.sent();
                         _b.label = 11;
                     case 11: return [3, 13];
                     case 12:
-                        if (e_3) throw e_3.error;
+                        if (e_2) throw e_2.error;
                         return [7];
                     case 13: return [7];
                     case 14: return [2];

@@ -6,22 +6,16 @@ export async function* count(input, predicate) {
     }
     yield c;
 }
+const numberComparer = (a, b) => a > b ? 1 : -1;
 export async function* max(input, comparer) {
-    if (!comparer) {
-        comparer = (a, b) => {
-            if (typeof a !== "number" || typeof b !== "number") {
-                throw TypeError("Input must be number when no comparer is given.");
-            }
-            return a > b ? 1 : -1;
-        };
-    }
+    let comp = (comparer || numberComparer);
     let max = null;
     for await (const val of input) {
         if (max === null) {
             max = val;
         }
         else {
-            max = comparer(val, max) > 0 ? val : max;
+            max = comp(val, max) > 0 ? val : max;
         }
     }
     if (max !== null) {
@@ -29,21 +23,10 @@ export async function* max(input, comparer) {
     }
 }
 export async function* min(input, comparer) {
-    if (!comparer) {
-        comparer = (a, b) => {
-            if (typeof a !== "number" || typeof b !== "number") {
-                throw TypeError("Input must be number when no comparer is given.");
-            }
-            return a < b ? 1 : -1;
-        };
-    }
-    else {
-        const origcomp = comparer;
-        comparer = (a, b) => {
-            return origcomp(a, b) < 0 ? 1 : -1;
-        };
-    }
-    return max(input, comparer);
+    let comp = comparer || numberComparer;
+    return max(input, (a, b) => {
+        return comp(a, b) < 0 ? 1 : -1;
+    });
 }
 export async function* reduce(input, fn, seed) {
     let acc = seed;

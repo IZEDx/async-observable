@@ -17,39 +17,42 @@ export class Observable {
     constructor(ai) {
         Object.assign(this, ai);
     }
+    static callback(val, fn) {
+        return new Observable(AsyncGenerators.callback(val, fn));
+    }
+    static interval(ms, max) {
+        return new Observable(AsyncGenerators.interval(ms, max));
+    }
     static of(...values) {
         return new Observable(AsyncGenerators.of(...values));
-    }
-    static create(creator) {
-        return new Observable(AsyncGenerators.create(creator));
-    }
-    static interval(ms) {
-        return new Observable(AsyncGenerators.create(observer => {
-            let i = 0;
-            setInterval(() => {
-                observer.next(i);
-                i += 1;
-            }, ms);
-        }));
     }
     static range(from, to, step = 1) {
         return new Observable(AsyncGenerators.range(from, to, step));
     }
+    static fibonacci(iterations) {
+        return new Observable(AsyncGenerators.fibonacci(iterations));
+    }
+    static create(creator) {
+        return new Observable(AsyncGenerators.create(creator));
+    }
     static listen(stream) {
-        return new Observable(AsyncGenerators.create(observer => {
+        return Observable.create(observer => {
             stream.on("error", err => observer.throw(err));
             stream.on("close", hadError => observer.return());
             stream.on("data", data => observer.next(data));
-        }));
+        });
     }
-    checkValid() {
-        return this.filter(v => v !== undefined && v !== null);
+    count(predicate) {
+        return new Observable(AsyncOperators.count(this, predicate));
     }
-    do(fn) {
-        return this.forEach(fn);
+    max(comparer) {
+        return new Observable(AsyncOperators.max(this, comparer));
     }
-    forEach(fn) {
-        return new Observable(AsyncOperators.forEach(this, fn));
+    min(comparer) {
+        return new Observable(AsyncOperators.min(this, comparer));
+    }
+    reduce(fn, seed) {
+        return new Observable(AsyncOperators.reduce(this, fn, seed));
     }
     filter(fn) {
         return new Observable(AsyncOperators.filter(this, fn));
@@ -60,15 +63,34 @@ export class Observable {
     flatMap(fn) {
         return new Observable(AsyncOperators.flatMap(this, fn));
     }
+    checkValid() {
+        return this.filter(v => v !== undefined && v !== null);
+    }
+    do(fn) {
+        return this.forEach(fn);
+    }
+    forEach(fn) {
+        return new Observable(AsyncOperators.forEach(this, fn));
+    }
+    assign(object, key) {
+        return this.subscribe({
+            next: val => {
+                object[key] = val;
+            }
+        });
+    }
     subscribe(subscriber) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let observer = subscriber instanceof AsyncObserver
-                ? subscriber
-                : new AsyncObserver(subscriber);
+        let cancelled = false;
+        const observer = subscriber instanceof AsyncObserver
+            ? subscriber
+            : new AsyncObserver(subscriber);
+        const subscription = (() => __awaiter(this, void 0, void 0, function* () {
             try {
                 try {
                     for (var _a = __asyncValues(this), _b; _b = yield _a.next(), !_b.done;) {
                         const data = yield _b.value;
+                        if (cancelled)
+                            break;
                         const r = observer.next(data);
                         if (r instanceof Promise) {
                             yield r;
@@ -94,7 +116,11 @@ export class Observable {
                 yield r;
             }
             var e_1, _c;
-        });
+        }))();
+        return {
+            cancel: () => cancelled = true,
+            wait: subscription
+        };
     }
 }
 //# sourceMappingURL=observable.js.map

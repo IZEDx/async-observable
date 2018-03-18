@@ -44,7 +44,7 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
 };
 export function forEach(input, fn) {
     return __asyncGenerator(this, arguments, function forEach_1() {
-        var input_1, input_1_1, data, run_1, e_1_1, e_1, _a;
+        var input_1, input_1_1, data, run, e_1_1, e_1, _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -57,8 +57,8 @@ export function forEach(input, fn) {
                     return [4, __await(input_1_1.value)];
                 case 3:
                     data = _b.sent();
-                    run_1 = fn(data);
-                    if (!(run_1 instanceof Promise)) return [3, 5];
+                    run = fn(data);
+                    if (!(run instanceof Promise)) return [3, 5];
                     return [4, __await(fn(data))];
                 case 4:
                     _b.sent();

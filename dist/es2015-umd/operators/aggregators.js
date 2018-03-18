@@ -48,16 +48,10 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
         });
     }
     exports.count = count;
+    const numberComparer = (a, b) => a > b ? 1 : -1;
     function max(input, comparer) {
         return __asyncGenerator(this, arguments, function* max_1() {
-            if (!comparer) {
-                comparer = (a, b) => {
-                    if (typeof a !== "number" || typeof b !== "number") {
-                        throw TypeError("Input must be number when no comparer is given.");
-                    }
-                    return a > b ? 1 : -1;
-                };
-            }
+            let comp = (comparer || numberComparer);
             let max = null;
             try {
                 for (var input_1 = __asyncValues(input), input_1_1; input_1_1 = yield __await(input_1.next()), !input_1_1.done;) {
@@ -66,7 +60,7 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
                         max = val;
                     }
                     else {
-                        max = comparer(val, max) > 0 ? val : max;
+                        max = comp(val, max) > 0 ? val : max;
                     }
                 }
             }
@@ -86,21 +80,10 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
     exports.max = max;
     function min(input, comparer) {
         return __asyncGenerator(this, arguments, function* min_1() {
-            if (!comparer) {
-                comparer = (a, b) => {
-                    if (typeof a !== "number" || typeof b !== "number") {
-                        throw TypeError("Input must be number when no comparer is given.");
-                    }
-                    return a < b ? 1 : -1;
-                };
-            }
-            else {
-                const origcomp = comparer;
-                comparer = (a, b) => {
-                    return origcomp(a, b) < 0 ? 1 : -1;
-                };
-            }
-            return max(input, comparer);
+            let comp = comparer || numberComparer;
+            return max(input, (a, b) => {
+                return comp(a, b) < 0 ? 1 : -1;
+            });
         });
     }
     exports.min = min;

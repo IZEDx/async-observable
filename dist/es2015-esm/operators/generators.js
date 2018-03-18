@@ -47,6 +47,24 @@ export function range(from, to, step = 1) {
         }
     });
 }
+export function fibonacci(n) {
+    return __asyncGenerator(this, arguments, function* fibonacci_1() {
+        let a = 1, b = 1;
+        yield 1;
+        yield 1;
+        while (!n || b < n) {
+            [a, b] = [b, a + b];
+            yield b;
+        }
+    });
+}
+export function random(min = 0, max = 1, count = Infinity) {
+    return __asyncGenerator(this, arguments, function* random_1() {
+        for (let i = 0; i < count; i++) {
+            yield min + Math.random() * (max - min);
+        }
+    });
+}
 export function create(creator) {
     return {
         [Symbol.asyncIterator]() {

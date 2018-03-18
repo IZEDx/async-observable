@@ -29,6 +29,20 @@ export async function* range(from, to, step = 1) {
         yield i;
     }
 }
+export async function* fibonacci(n) {
+    let a = 1, b = 1;
+    yield 1;
+    yield 1;
+    while (!n || b < n) {
+        [a, b] = [b, a + b];
+        yield b;
+    }
+}
+export async function* random(min = 0, max = 1, count = Infinity) {
+    for (let i = 0; i < count; i++) {
+        yield min + Math.random() * (max - min);
+    }
+}
 export function create(creator) {
     return {
         [Symbol.asyncIterator]() {
