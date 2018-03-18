@@ -1,12 +1,19 @@
 
-import { IObserver, AsyncObserver } from "./observer";
+import { IObserver, AsyncObserver, ObserverFunction } from "./observer";
 import { Generators as AsyncGenerators, Operators as AsyncOperators } from "./operators/";
+import { OptionalAsync } from ".";
+import { CompareFunction } from "./operators/aggregators";
 
 export interface ReadableStream {
     on(event: "error", cb: (err: Error) => void): void;
     on(event: "close", cb: (hadErr: boolean) => void): void;
     on(event: "data", cb: (data: any) => void): void;
     on(event: string, cb: Function): void;
+}
+
+export interface Subscription {
+    cancel: () => void
+    wait: Promise<void>
 }
 
 /**
@@ -26,99 +33,153 @@ export interface ReadableStream {
  * ```
  */
 export class Observable<T> implements AsyncIterable<T> {
-    public [Symbol.asyncIterator]: () => AsyncIterator<T>;
+    [Symbol.asyncIterator]: () => AsyncIterator<T>;
 
     constructor(ai: AsyncIterable<T>) {
         Object.assign(this, ai);
     }
 
-    // Generators 
+    // ---------------------------------------------------------
+    // --------------------  Generators  -----------------------
+    // ---------------------------------------------------------
 
-    public static of<T>(...values: (T|Promise<T>)[]): Observable<T> {
+    static callback<T, K>(val: T, fn: (val: T, callback: (err: any, v: K) => any) => any): Observable<K> {
+        return new Observable(AsyncGenerators.callback(val, fn));
+    }
+
+    static interval(ms: number, max: number): Observable<number> {
+        return new Observable(AsyncGenerators.interval(ms, max));
+    }
+
+    static of<T>(...values: (T|Promise<T>)[]): Observable<T> {
         return new Observable(AsyncGenerators.of(...values));
     }
 
-    public static create<T>(creator: (observer: AsyncObserver<T>) => void): Observable<T> {
-        return new Observable(AsyncGenerators.create(creator));
-    }
-
-    public static interval(ms: number): Observable<number> {
-        return new Observable(AsyncGenerators.create(observer => {
-            let i = 0;
-            setInterval(
-                () => {
-                    observer.next(i);
-                    i += 1;
-                },
-                ms
-            );
-        }));
-    }
-
-    public static range(from: number, to: number, step: number = 1): Observable<number> {
+    static range(from: number, to: number, step: number = 1): Observable<number> {
         return new Observable(AsyncGenerators.range(from, to, step));
     }
 
+    static fibonacci(iterations?: number): Observable<number> {
+        return new Observable(AsyncGenerators.fibonacci(iterations));
+    }
 
-    public static listen<T>(stream: ReadableStream): Observable<T> {
-        return new Observable(AsyncGenerators.create(observer => {
+    static create<T>(creator: ObserverFunction<T>): Observable<T> {
+        return new Observable(AsyncGenerators.create(creator));
+    }
+
+    static listen<T>(stream: ReadableStream): Observable<T> {
+        return Observable.create(observer => {
             stream.on("error", err      => observer.throw(err));
             stream.on("close", hadError => observer.return());
             stream.on("data",  data     => observer.next(data));
-        }));
+        });
     }
 
-    // Operators
+    // ---------------------------------------------------------
+    // --------------------  Aggregators  ----------------------
+    // ---------------------------------------------------------
 
-    public checkValid(): Observable<T> {
-        return this.filter(v => v !== undefined && v !== null);
+    count(predicate?: (value: T) => Promise<boolean>|boolean): Observable<number> {
+        return new Observable(AsyncOperators.count(this, predicate));
     }
 
-    public do(fn: (value: T) => Promise<void>|void): Observable<T> {
-        return this.forEach(fn);
+    /**
+     * max listens on this input observable and yields the element with
+     * the maximum value when the input is completed.
+     * When the input type is not a number, a custom comparer has to be passed
+     * to compare the values.
+     * @param {T extends number ? undefined : (a: T, b: T) => 1|0|-1} comparer Required for non-number values.
+     */
+    max<T extends number>(comparer?: CompareFunction<T>): Observable<T>;
+    max(comparer: CompareFunction<T>): Observable<T> {
+        return new Observable(AsyncOperators.max(this, comparer));
     }
 
-    public forEach(fn: (value: T) => Promise<void>|void): Observable<T> {
-        return new Observable(AsyncOperators.forEach(this, fn));
+    min<T extends number>(comparer?: CompareFunction<T>): Observable<T>;
+    min(comparer: CompareFunction<T>): Observable<T> {
+        return new Observable(AsyncOperators.min(this, comparer));
+    }
+ 
+    reduce<K = T>(fn: (acc: K, curr: T) => K, seed: K): Observable<K> {
+        return new Observable(AsyncOperators.reduce(this, fn, seed));
     }
 
-    public filter(fn: (value: T) => Promise<boolean>|boolean): Observable<T> {
+    // ---------------------------------------------------------
+    // ----------------------  Filters  ------------------------
+    // ---------------------------------------------------------
+
+    filter(fn: (value: T) => OptionalAsync<boolean>): Observable<T> {
         return new Observable(AsyncOperators.filter(this, fn));
     }
 
-    public map<K>(fn: (value: T) => Promise<K>|K): Observable<K> {
+    // ---------------------------------------------------------
+    // -------------------  Transformators  --------------------
+    // ---------------------------------------------------------
+
+    map<K>(fn: (value: T) => OptionalAsync<K>): Observable<K> {
         return new Observable(AsyncOperators.map(this, fn));
     }
 
-    public flatMap<K>(fn: (value: T) => Observable<K>): Observable<K> {
+    flatMap<K>(fn: (value: T) => Observable<K>): Observable<K> {
         return new Observable(AsyncOperators.flatMap(this, fn));
     }
 
-    // Subscriber
+    // ---------------------------------------------------------
+    // ---------------------  Utilities  -----------------------
+    // ---------------------------------------------------------
 
-    public async subscribe(subscriber: AsyncObserver<T>|IObserver<T>): Promise<void> {
-        let observer: AsyncObserver<T> = subscriber instanceof AsyncObserver
+    checkValid(): Observable<T> {
+        return this.filter(v => v !== undefined && v !== null);
+    }
+
+    do(fn: (value: T) => OptionalAsync<void>): Observable<T> {
+        return this.forEach(fn);
+    }
+
+    forEach(fn: (value: T) => OptionalAsync<void>): Observable<T> {
+        return new Observable(AsyncOperators.forEach(this, fn));
+    }
+
+    assign<U extends {[K in keyof U]: U[K]}, K extends keyof U>(object: U, key: K): Subscription {
+        return this.subscribe({
+            next: val => {
+                object[key] = val;
+            }
+        })
+    }
+
+    subscribe<K extends IObserver<T>>(subscriber: K): Subscription {
+        let cancelled = false;
+        const observer: AsyncObserver<T> = subscriber instanceof AsyncObserver
             ?   subscriber
             :   new AsyncObserver(subscriber);
             
-        try {
-            for await(const data of this) {
-                const r = observer.next(data);
+        const subscription = (async () => {
+            try {
+                for await(const data of this) {
+                    if (cancelled) break;
+                    const r = observer.next(data);
+                    if (r instanceof Promise) {
+                        await r;
+                    }
+                }
+            } catch (e) {
+                const r = observer.throw(e);
                 if (r instanceof Promise) {
                     await r;
                 }
             }
-        } catch (e) {
-            const r = observer.throw(e);
+    
+            const r = observer.return();
             if (r instanceof Promise) {
                 await r;
             }
-        }
+        })();
 
-        const r = observer.return();
-        if (r instanceof Promise) {
-            await r;
-        }
+        return {
+            cancel: () => cancelled = true,
+            wait: subscription
+        };
     }
 
 }

@@ -10,6 +10,8 @@ export function polyfillAsyncIterator() {
 
 polyfillAsyncIterator();
 
+export type OptionalAsync<T> = Promise<T>|T;
+
 /**
  * Adds the passed function to the JavaScript Message Queue to be executed by the Event Loop, 
  * wraps a Promise around that and resolves any asynchronous values.
