@@ -19,7 +19,8 @@
     "watch": "npm run build -- --watch",
     "test": "./node_modules/.bin/nyc --reporter=lcov --require ts-node/register ./node_modules/.bin/tape tests/**/*.ts | tap-spec",
     "coverage": "./node_modules/.bin/nyc report --reporter=text",
-    "docs": "rm -rf docs && ./node_modules/.bin/typedoc --name async-observable --readme README.md --module commonjs --target ES5 --excludeExternals --out docs --theme default src/ && touch docs/.nojekyll"
+    "docs": "rm -rf docs && ./node_modules/.bin/typedoc --name async-observable --readme README.md --module commonjs --target ES5 --excludeExternals --out docs --theme default src/ && touch docs/.nojekyll",
+    "clean-up": "rm -rf ts-node-* & rm -rf .nyc_output"
   },
   "repository": {
     "type": "git",
