@@ -1,5 +1,5 @@
 
-import { IObserver, AsyncObserver, ObserverFunction } from "./observer";
+import { IObserver, Observer, ObserverFunction } from "./observer";
 import { Generators as AsyncGenerators, Operators as AsyncOperators } from "./operators/";
 import { OptionalAsync } from ".";
 import { CompareFunction } from "./operators/aggregators";
@@ -108,6 +108,10 @@ export class Observable<T> implements AsyncIterable<T> {
     // ----------------------  Filters  ------------------------
     // ---------------------------------------------------------
 
+    where(fn: (value: T) => OptionalAsync<boolean>): Observable<T> {
+        return this.filter(fn);
+    }
+
     filter(fn: (value: T) => OptionalAsync<boolean>): Observable<T> {
         return new Observable(AsyncOperators.filter(this, fn));
     }
@@ -140,6 +144,14 @@ export class Observable<T> implements AsyncIterable<T> {
         return new Observable(AsyncOperators.forEach(this, fn));
     }
 
+    async toArray(): Promise<T[]> {
+        const elements: T[] = [];
+        for await(const el of this) {
+            elements.push(el);
+        }
+        return elements;
+    }
+
     assign<U extends {[K in keyof U]: U[K]}, K extends keyof U>(object: U, key: K): Subscription {
         return this.subscribe({
             next: val => {
@@ -150,11 +162,11 @@ export class Observable<T> implements AsyncIterable<T> {
 
     subscribe<K extends IObserver<T>>(subscriber: K): Subscription {
         let cancelled = false;
-        const observer: AsyncObserver<T> = subscriber instanceof AsyncObserver
+        const observer: Observer<T> = subscriber instanceof Observer
             ?   subscriber
-            :   new AsyncObserver(subscriber);
+            :   new Observer(subscriber);
             
-        const subscription = (async () => {
+        const promise = (async () => {
             try {
                 for await(const data of this) {
                     if (cancelled) break;
@@ -178,7 +190,7 @@ export class Observable<T> implements AsyncIterable<T> {
 
         return {
             cancel: () => cancelled = true,
-            wait: subscription
+            wait: promise
         };
     }
 

@@ -1,34 +1,35 @@
+import { OptionalAsync } from ".";
 
 /**
  * An Observer can subscribe on an Observable,
  * after which its functions will be called by the Observable.
  */
 export interface IObserver<T> {
-    next(value: T): Promise<void>|void;
-    throw?(error: Error): Promise<void>|void;
-    return?(): Promise<void>|void;
+    next(value: T): OptionalAsync<void>;
+    throw?(error: Error): OptionalAsync<void>;
+    return?(): OptionalAsync<void>;
 }
 
-export class AsyncObserver<T> implements IObserver<T> {
+export class Observer<T> implements IObserver<T> {
     
     constructor(private obs: IObserver<T>) {
     }
 
-    next(value: T): Promise<void>|void {
+    next(value: T): OptionalAsync<void> {
         return this.obs.next(value);
     }
 
-    return(): Promise<void>|void {
+    return(): OptionalAsync<void> {
         if (this.obs.return) {
             return this.obs.return();
         }
     }
 
-    throw(error: Error): Promise<void>|void {
+    throw(error: Error): OptionalAsync<void> {
         if (this.obs.throw) {
             return this.obs.throw(error);
         }
     }
 }
 
-export type ObserverFunction<T> = (observer: AsyncObserver<T>) => void;
+export type ObserverFunction<T> = (observer: Observer<T>) => void;
