@@ -175,16 +175,15 @@ export class Observable<T> implements AsyncIterable<T> {
                         await r;
                     }
                 }
+                const r = observer.return();
+                if (r instanceof Promise) {
+                    await r;
+                }
             } catch (e) {
                 const r = observer.throw(e);
                 if (r instanceof Promise) {
                     await r;
                 }
-            }
-    
-            const r = observer.return();
-            if (r instanceof Promise) {
-                await r;
             }
         })();
 
