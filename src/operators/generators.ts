@@ -1,5 +1,5 @@
 
-import { AsyncObserver, ObserverFunction } from "../observer";
+import { Observer, ObserverFunction } from "../observer";
 
 const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -99,7 +99,7 @@ export function create<T>(creator: ObserverFunction<T>): AsyncIterable<T> {
             const resultQueue: IteratorResult<T>[] = [];
             let thrownError: Error|undefined;
 
-            creator(new AsyncObserver({
+            creator(new Observer({
                 next(value: T) {
                     if (thrownError !== undefined) return;
                     if (waitingNext === null) {
