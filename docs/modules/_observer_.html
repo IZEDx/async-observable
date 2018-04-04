@@ -99,7 +99,7 @@
 					<div class="tsd-signature tsd-kind-icon">Emitter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/0632e45/src/observer.ts#L37">observer.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/b76c3d4/src/observer.ts#L37">observer.ts:37</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -107,7 +107,7 @@
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-siganture">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias tsd-is-not-exported">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>observer<span class="tsd-signature-symbol">: </span><a href="../classes/_observer_.observer.html" class="tsd-signature-type">Observer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>observer<span class="tsd-signature-symbol">: </span><a href="../classes/_observer_.observer.html" class="tsd-signature-type">Observer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, onUnsubscribe<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
@@ -115,6 +115,39 @@
 										<ul class="tsd-parameters">
 											<li>
 												<h5>observer: <a href="../classes/_observer_.observer.html" class="tsd-signature-type">Observer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+											</li>
+											<li>
+												<h5>onUnsubscribe: <span class="tsd-signature-type">function</span></h5>
+												<ul class="tsd-parameters">
+													<li class="tsd-parameter-siganture">
+														<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+															<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+														</ul>
+														<ul class="tsd-descriptions">
+															<li class="tsd-description">
+																<h4 class="tsd-parameters-title">Parameters</h4>
+																<ul class="tsd-parameters">
+																	<li>
+																		<h5>callback: <span class="tsd-signature-type">function</span></h5>
+																		<ul class="tsd-parameters">
+																			<li class="tsd-parameter-siganture">
+																				<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+																					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+																				</ul>
+																				<ul class="tsd-descriptions">
+																					<li class="tsd-description">
+																						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+																					</li>
+																				</ul>
+																			</li>
+																		</ul>
+																	</li>
+																</ul>
+																<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+															</li>
+														</ul>
+													</li>
+												</ul>
 											</li>
 										</ul>
 										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
