@@ -1,6 +1,6 @@
 {
   "name": "async-observable",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Observable implementation using TypeScript, async/await and AsyncIterables.",
   "browser": "dist/es5-umd/index.js",
   "module": "dist/es5-esm/index.js",
