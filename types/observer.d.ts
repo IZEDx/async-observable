@@ -1,13 +1,29 @@
-export interface IObserver<T> {
-    next(value: T): Promise<void> | void;
-    throw?(error: Error): Promise<void> | void;
-    return?(): Promise<void> | void;
+import { MaybePromise } from ".";
+export declare class ObserverError extends Error {
 }
-export declare class AsyncObserver<T> implements IObserver<T> {
+export interface IObserver<T> {
+    next(value: T): MaybePromise<void>;
+    throw?(error: Error): MaybePromise<void>;
+    return?(): MaybePromise<void>;
+}
+export declare class Observer<T> implements IObserver<T> {
     private obs;
     constructor(obs: IObserver<T>);
-    next(value: T): Promise<void> | void;
-    return(): Promise<void> | void;
-    throw(error: Error): Promise<void> | void;
+    next(value: T): MaybePromise<void>;
+    return(): MaybePromise<void>;
+    throw(error: Error): MaybePromise<void>;
 }
-export declare type ObserverFunction<T> = (observer: AsyncObserver<T>) => void;
+export declare type Emitter<T> = (observer: Observer<T>) => void;
+export declare class BufferedObserver<T> extends Observer<T> {
+    private _waitingNext;
+    private _waitingError;
+    private _resultQueue;
+    private _thrownError;
+    private _done;
+    private _started;
+    readonly thrownError: Error | undefined;
+    readonly done: boolean;
+    readonly started: boolean;
+    constructor();
+    wait(): Promise<IteratorResult<T>>;
+}

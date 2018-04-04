@@ -1,5 +1,5 @@
-import { IObserver, ObserverFunction } from "./observer";
-import { OptionalAsync } from ".";
+import { IObserver, Emitter } from "./observer";
+import { MaybePromise } from ".";
 import { CompareFunction } from "./operators/aggregators";
 export interface ReadableStream {
     on(event: "error", cb: (err: Error) => void): void;
@@ -19,18 +19,20 @@ export declare class Observable<T> implements AsyncIterable<T> {
     static of<T>(...values: (T | Promise<T>)[]): Observable<T>;
     static range(from: number, to: number, step?: number): Observable<number>;
     static fibonacci(iterations?: number): Observable<number>;
-    static create<T>(creator: ObserverFunction<T>): Observable<T>;
+    static create<T>(emitter: Emitter<T>): Observable<T>;
     static listen<T>(stream: ReadableStream): Observable<T>;
     count(predicate?: (value: T) => Promise<boolean> | boolean): Observable<number>;
     max<T extends number>(comparer?: CompareFunction<T>): Observable<T>;
     min<T extends number>(comparer?: CompareFunction<T>): Observable<T>;
     reduce<K = T>(fn: (acc: K, curr: T) => K, seed: K): Observable<K>;
-    filter(fn: (value: T) => OptionalAsync<boolean>): Observable<T>;
-    map<K>(fn: (value: T) => OptionalAsync<K>): Observable<K>;
+    where(fn: (value: T) => MaybePromise<boolean>): Observable<T>;
+    filter(fn: (value: T) => MaybePromise<boolean>): Observable<T>;
+    map<K>(fn: (value: T) => MaybePromise<K>): Observable<K>;
     flatMap<K>(fn: (value: T) => Observable<K>): Observable<K>;
     checkValid(): Observable<T>;
-    do(fn: (value: T) => OptionalAsync<void>): Observable<T>;
-    forEach(fn: (value: T) => OptionalAsync<void>): Observable<T>;
+    do(fn: (value: T) => MaybePromise<void>): Observable<T>;
+    forEach(fn: (value: T) => MaybePromise<void>): Observable<T>;
+    toArray(): Promise<T[]>;
     assign<U extends {
         [K in keyof U]: U[K];
     }, K extends keyof U>(object: U, key: K): Subscription;

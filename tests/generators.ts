@@ -95,6 +95,7 @@ test("create should push values", when(async assert => {
 
     let c = 0;
     for await(const i of it) {
+        console.log(i);
         assert.equal(i, c++, "Value should be incremented by one.");
     }
     assert.equal(c, 3, "Total count should be 3.");

@@ -1,7 +1,7 @@
 
-import { IObserver, Observer, ObserverFunction } from "./observer";
+import { IObserver, Observer, Emitter } from "./observer";
 import { Generators as AsyncGenerators, Operators as AsyncOperators } from "./operators/";
-import { OptionalAsync } from ".";
+import { MaybePromise } from ".";
 import { CompareFunction } from "./operators/aggregators";
 
 export interface ReadableStream {
@@ -63,8 +63,8 @@ export class Observable<T> implements AsyncIterable<T> {
         return new Observable(AsyncGenerators.fibonacci(iterations));
     }
 
-    static create<T>(creator: ObserverFunction<T>): Observable<T> {
-        return new Observable(AsyncGenerators.create(creator));
+    static create<T>(emitter: Emitter<T>): Observable<T> {
+        return new Observable(AsyncGenerators.create(emitter));
     }
 
     static listen<T>(stream: ReadableStream): Observable<T> {
@@ -108,11 +108,11 @@ export class Observable<T> implements AsyncIterable<T> {
     // ----------------------  Filters  ------------------------
     // ---------------------------------------------------------
 
-    where(fn: (value: T) => OptionalAsync<boolean>): Observable<T> {
+    where(fn: (value: T) => MaybePromise<boolean>): Observable<T> {
         return this.filter(fn);
     }
 
-    filter(fn: (value: T) => OptionalAsync<boolean>): Observable<T> {
+    filter(fn: (value: T) => MaybePromise<boolean>): Observable<T> {
         return new Observable(AsyncOperators.filter(this, fn));
     }
 
@@ -120,7 +120,7 @@ export class Observable<T> implements AsyncIterable<T> {
     // -------------------  Transformators  --------------------
     // ---------------------------------------------------------
 
-    map<K>(fn: (value: T) => OptionalAsync<K>): Observable<K> {
+    map<K>(fn: (value: T) => MaybePromise<K>): Observable<K> {
         return new Observable(AsyncOperators.map(this, fn));
     }
 
@@ -136,11 +136,11 @@ export class Observable<T> implements AsyncIterable<T> {
         return this.filter(v => v !== undefined && v !== null);
     }
 
-    do(fn: (value: T) => OptionalAsync<void>): Observable<T> {
+    do(fn: (value: T) => MaybePromise<void>): Observable<T> {
         return this.forEach(fn);
     }
 
-    forEach(fn: (value: T) => OptionalAsync<void>): Observable<T> {
+    forEach(fn: (value: T) => MaybePromise<void>): Observable<T> {
         return new Observable(AsyncOperators.forEach(this, fn));
     }
 

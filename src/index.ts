@@ -1,5 +1,4 @@
 
-
 function polyfillSymbol(name: string) {
     (<any>Symbol)[name] = Symbol[name] !== undefined ? Symbol[name] : Symbol.for(name);
 }
@@ -10,7 +9,10 @@ export function polyfillAsyncIterator() {
 
 polyfillAsyncIterator();
 
-export type OptionalAsync<T> = Promise<T>|T;
+export type MaybePromise<T> = Promise<T>|T;
+export type Optional<T> = { 
+    [P in keyof T]?: T[P] 
+}
 
 /**
  * Adds the passed function to the JavaScript Message Queue to be executed by the Event Loop, 
@@ -36,4 +38,3 @@ export async function immediate<T, K>(fn: (...args: K[]) => T|Promise<T>, ...arg
 export * from "./observable";
 export * from "./observer";
 export * from "./operators/";
-

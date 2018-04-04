@@ -1,5 +1,6 @@
 
-import { Observer, ObserverFunction } from "../observer";
+import { Observer, Emitter, BufferedObserver, ObserverError } from "../observer";
+import { Optional } from "..";
 
 const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -20,8 +21,8 @@ export function callback<T, K>(val: T, fn: (val: T, callback: (err: any, v: K) =
                 observer.throw(err);
             } else {
                 observer.next(v);
+                observer.return();
             }
-            observer.return();
         });
     });
 }
@@ -88,65 +89,15 @@ export async function* random(min = 0, max = 1, count: number = Infinity): Async
 }
 
 /**
- * Creates an async iterable from a callback using an Observer.
- * @param {(observer: Observer<T>) => void} creator Callback to create the iterable.
+ * Creates an async iterable from a callback using a BufferedObserver.
+ * @param {Emitter<T>} creator Callback to create the iterable.
  */
-export function create<T>(creator: ObserverFunction<T>): AsyncIterable<T> {
+export function create<T>(emitter: Emitter<T>): AsyncIterable<T> {
     return {
         [Symbol.asyncIterator]() {
-            let waitingNext: null | ((data: IteratorResult<T>) => void) = null;
-            let waitingError: (err: Error) => void;
-            const resultQueue: IteratorResult<T>[] = [];
-            let thrownError: Error|undefined;
-
-            creator(new Observer({
-                next(value: T) {
-                    if (thrownError !== undefined) return;
-                    if (waitingNext === null) {
-                        resultQueue.push({value, done: false});
-                    } else {
-                        waitingNext({value, done: false});
-                        waitingNext = null;
-                    }
-                },
-                // Any hack because TypeScript doesn't like IteratorResults with undefined values.
-                return() {
-                    if (thrownError !== undefined) return;
-                    if (waitingNext === null) {
-                        resultQueue.push({value: undefined, done: true} as any);
-                    } else {
-                        waitingNext({value: undefined, done: true} as any);
-                        waitingNext = null;
-                    }
-                },
-                throw(err: Error) {
-                    if (waitingError === undefined) {
-                        thrownError = err;
-                    } else {
-                        waitingError(err);
-                    }
-                }
-            }));
-
-            return {
-                next() {
-                    return new Promise<IteratorResult<T>>((resolve, reject) => {
-                        waitingError = reject;
-                        if (resultQueue.length === 0) { 
-                            if (thrownError !== undefined) {
-                                reject(thrownError);
-                                return;
-                            }
-
-                            waitingNext = resolve; 
-                            return;
-                        }
-
-                        resolve(resultQueue[0]);
-                        resultQueue.splice(0, 1);
-                    });
-                }
-            };
+            let observer = new BufferedObserver<T>();   
+            emitter(observer);    
+            return { next: () => observer.wait() };
         }
     };
 }
