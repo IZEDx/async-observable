@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "es2015",
-        "module": "umd",
+        "module": "commonjs",
         "moduleResolution": "node",
         "sourceMap": true,
         "pretty": true,
@@ -17,7 +17,7 @@
             "dom",
             "esnext"
         ],
-        "outDir": "dist/es2015-umd"
+        "outDir": "dist/es2015-commonjs"
     },
     "exclude": [
         "node_modules",

@@ -2,7 +2,6 @@
 tsconfig.json
 .travis.yml
 tests/
-src/
 docs/
 coverage/
 .vscode/
