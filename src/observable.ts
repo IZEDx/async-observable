@@ -49,7 +49,7 @@ export class Observable<T> implements AsyncIterable<T> {
     }
 
     static of<T>(...values: (T|Promise<T>)[]): Observable<T> {
-        return Observable.unsubscribable(AsyncGenerators.of, ...values);
+        return Observable.unsubscribable<T>(AsyncGenerators.of, ...values);
     }
 
     static range(from: number, to: number, step: number = 1): Observable<number> {
@@ -87,7 +87,7 @@ export class Observable<T> implements AsyncIterable<T> {
     }
 
     static create<T>(emitter: Emitter<T>): Observable<T> {
-        return Observable.unsubscribable(AsyncGenerators.create, emitter);
+        return Observable.unsubscribable<T>(AsyncGenerators.create, emitter);
     }
 
     static unsubscribable<T>(generator: AsyncGenerator<T>, ...args: any[]): Observable<T> {
