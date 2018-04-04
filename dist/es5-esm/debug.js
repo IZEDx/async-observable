@@ -39,13 +39,13 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     return m ? m.call(o) : typeof __values === "function" ? __values(o) : o[Symbol.iterator]();
 };
 var _this = this;
-import { Generators } from ".";
+import { Observable } from ".";
 (function () { return __awaiter(_this, void 0, void 0, function () {
     var it, c, it_1, it_1_1, i, e_1_1, e_1, _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                it = Generators.create(function (observer) {
+                it = Observable.create(function (observer) {
                     observer.next(0);
                     observer.next(1);
                     observer.next(2);

@@ -12,64 +12,63 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
 };
 import { BufferedObserver } from "../observer";
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
-export function callback(val, fn) {
-    return create(observer => {
-        fn(val, (err, v) => {
-            if (!!err) {
-                observer.throw(err);
-            }
-            else {
-                observer.next(v);
-                observer.return();
-            }
-        });
-    });
-}
-export function interval(ms, max) {
+export function interval(onUnsubscribe, ms, max) {
     return __asyncGenerator(this, arguments, function* interval_1() {
-        for (let i = 0; i < max; i++) {
+        let cancelled = false;
+        onUnsubscribe(() => cancelled = true);
+        for (let i = 0; i < max && !cancelled; i++) {
             yield i;
             yield __await(sleep(ms));
         }
     });
 }
-export function of(...values) {
+export function of(onUnsubscribe, ...values) {
     return __asyncGenerator(this, arguments, function* of_1() {
+        let cancelled = false;
+        onUnsubscribe(() => cancelled = true);
         for (const v of values) {
+            if (cancelled)
+                break;
             yield (v instanceof Promise) ? yield __await(v) : v;
         }
     });
 }
-export function range(from, to, step = 1) {
+export function range(onUnsubscribe, from, to, step = 1) {
     return __asyncGenerator(this, arguments, function* range_1() {
-        for (let i = from; i <= to; i += step) {
+        let cancelled = false;
+        onUnsubscribe(() => cancelled = true);
+        for (let i = from; i <= to && !cancelled; i += step) {
             yield i;
         }
     });
 }
-export function fibonacci(n) {
+export function fibonacci(onUnsubscribe, n) {
     return __asyncGenerator(this, arguments, function* fibonacci_1() {
+        let cancelled = false;
+        onUnsubscribe(() => cancelled = true);
         let a = 1, b = 1;
         yield 1;
         yield 1;
-        while (!n || b < n) {
+        while ((!n || b < n) && !cancelled) {
             [a, b] = [b, a + b];
             yield b;
         }
     });
 }
-export function random(min = 0, max = 1, count = Infinity) {
+export function random(onUnsubscribe, min = 0, max = 1, count = Infinity) {
     return __asyncGenerator(this, arguments, function* random_1() {
-        for (let i = 0; i < count; i++) {
+        let cancelled = false;
+        onUnsubscribe(() => cancelled = true);
+        for (let i = 0; i < count && !cancelled; i++) {
             yield min + Math.random() * (max - min);
         }
     });
 }
-export function create(emitter) {
+export function create(onUnsubscribe, emitter) {
     return {
         [Symbol.asyncIterator]() {
             let observer = new BufferedObserver();
-            emitter(observer);
+            emitter(observer, onUnsubscribe);
             return { next: () => observer.wait() };
         }
     };

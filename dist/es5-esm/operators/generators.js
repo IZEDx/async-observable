@@ -39,29 +39,18 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
 };
 import { BufferedObserver } from "../observer";
 var sleep = function (ms) { return new Promise(function (res) { return setTimeout(res, ms); }); };
-export function callback(val, fn) {
-    return create(function (observer) {
-        fn(val, function (err, v) {
-            if (!!err) {
-                observer.throw(err);
-            }
-            else {
-                observer.next(v);
-                observer.return();
-            }
-        });
-    });
-}
-export function interval(ms, max) {
+export function interval(onUnsubscribe, ms, max) {
     return __asyncGenerator(this, arguments, function interval_1() {
-        var i;
+        var cancelled, i;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    cancelled = false;
+                    onUnsubscribe(function () { return cancelled = true; });
                     i = 0;
                     _a.label = 1;
                 case 1:
-                    if (!(i < max)) return [3, 5];
+                    if (!(i < max && !cancelled)) return [3, 5];
                     return [4, i];
                 case 2:
                     _a.sent();
@@ -77,21 +66,25 @@ export function interval(ms, max) {
         });
     });
 }
-export function of() {
+export function of(onUnsubscribe) {
     var values = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        values[_i] = arguments[_i];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        values[_i - 1] = arguments[_i];
     }
     return __asyncGenerator(this, arguments, function of_1() {
-        var _i, values_1, v, _a;
+        var cancelled, _i, values_1, v, _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
+                    cancelled = false;
+                    onUnsubscribe(function () { return cancelled = true; });
                     _i = 0, values_1 = values;
                     _b.label = 1;
                 case 1:
                     if (!(_i < values_1.length)) return [3, 7];
                     v = values_1[_i];
+                    if (cancelled)
+                        return [3, 7];
                     if (!(v instanceof Promise)) return [3, 3];
                     return [4, __await(v)];
                 case 2:
@@ -112,17 +105,19 @@ export function of() {
         });
     });
 }
-export function range(from, to, step) {
+export function range(onUnsubscribe, from, to, step) {
     if (step === void 0) { step = 1; }
     return __asyncGenerator(this, arguments, function range_1() {
-        var i;
+        var cancelled, i;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    cancelled = false;
+                    onUnsubscribe(function () { return cancelled = true; });
                     i = from;
                     _a.label = 1;
                 case 1:
-                    if (!(i <= to)) return [3, 4];
+                    if (!(i <= to && !cancelled)) return [3, 4];
                     return [4, i];
                 case 2:
                     _a.sent();
@@ -135,12 +130,14 @@ export function range(from, to, step) {
         });
     });
 }
-export function fibonacci(n) {
+export function fibonacci(onUnsubscribe, n) {
     return __asyncGenerator(this, arguments, function fibonacci_1() {
-        var a, b, _a;
+        var cancelled, a, b, _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
+                    cancelled = false;
+                    onUnsubscribe(function () { return cancelled = true; });
                     a = 1, b = 1;
                     return [4, 1];
                 case 1:
@@ -150,7 +147,7 @@ export function fibonacci(n) {
                     _b.sent();
                     _b.label = 3;
                 case 3:
-                    if (!(!n || b < n)) return [3, 5];
+                    if (!((!n || b < n) && !cancelled)) return [3, 5];
                     _a = [b, a + b], a = _a[0], b = _a[1];
                     return [4, b];
                 case 4:
@@ -161,19 +158,21 @@ export function fibonacci(n) {
         });
     });
 }
-export function random(min, max, count) {
+export function random(onUnsubscribe, min, max, count) {
     if (min === void 0) { min = 0; }
     if (max === void 0) { max = 1; }
     if (count === void 0) { count = Infinity; }
     return __asyncGenerator(this, arguments, function random_1() {
-        var i;
+        var cancelled, i;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    cancelled = false;
+                    onUnsubscribe(function () { return cancelled = true; });
                     i = 0;
                     _a.label = 1;
                 case 1:
-                    if (!(i < count)) return [3, 4];
+                    if (!(i < count && !cancelled)) return [3, 4];
                     return [4, min + Math.random() * (max - min)];
                 case 2:
                     _a.sent();
@@ -186,11 +185,11 @@ export function random(min, max, count) {
         });
     });
 }
-export function create(emitter) {
+export function create(onUnsubscribe, emitter) {
     return _a = {},
         _a[Symbol.asyncIterator] = function () {
             var observer = new BufferedObserver();
-            emitter(observer);
+            emitter(observer, onUnsubscribe);
             return { next: function () { return observer.wait(); } };
         },
         _a;

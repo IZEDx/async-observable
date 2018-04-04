@@ -11,9 +11,9 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     var m = o[Symbol.asyncIterator];
     return m ? m.call(o) : typeof __values === "function" ? __values(o) : o[Symbol.iterator]();
 };
-import { Generators } from ".";
+import { Observable } from ".";
 (() => __awaiter(this, void 0, void 0, function* () {
-    const it = Generators.create(observer => {
+    const it = Observable.create(observer => {
         observer.next(0);
         observer.next(1);
         observer.next(2);

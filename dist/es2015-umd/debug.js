@@ -24,7 +24,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     Object.defineProperty(exports, "__esModule", { value: true });
     const _1 = require(".");
     (() => __awaiter(this, void 0, void 0, function* () {
-        const it = _1.Generators.create(observer => {
+        const it = _1.Observable.create(observer => {
             observer.next(0);
             observer.next(1);
             observer.next(2);

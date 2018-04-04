@@ -25,26 +25,37 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     const observer_1 = require("./observer");
     const _1 = require("./operators/");
     class Observable {
-        constructor(ai) {
+        constructor(ai, unsubscribe) {
+            this.unsubscribe = unsubscribe;
             Object.assign(this, ai);
         }
-        static callback(val, fn) {
-            return new Observable(_1.Generators.callback(val, fn));
-        }
         static interval(ms, max) {
-            return new Observable(_1.Generators.interval(ms, max));
+            return Observable.unsubscribable(_1.Generators.interval, ms, max);
         }
         static of(...values) {
-            return new Observable(_1.Generators.of(...values));
+            return Observable.unsubscribable(_1.Generators.of, ...values);
         }
         static range(from, to, step = 1) {
-            return new Observable(_1.Generators.range(from, to, step));
+            return Observable.unsubscribable(_1.Generators.range, from, to, step);
         }
         static fibonacci(iterations) {
-            return new Observable(_1.Generators.fibonacci(iterations));
+            return Observable.unsubscribable(_1.Generators.fibonacci, iterations);
         }
-        static create(emitter) {
-            return new Observable(_1.Generators.create(emitter));
+        static random(min = 0, max = 1, count = Infinity) {
+            return Observable.unsubscribable(_1.Generators.random, min, max, count);
+        }
+        static callback(val, fn) {
+            return Observable.create(observer => {
+                fn(val, (err, v) => {
+                    if (err) {
+                        observer.throw(err);
+                    }
+                    else {
+                        observer.next(v);
+                        observer.return();
+                    }
+                });
+            });
         }
         static listen(stream) {
             return Observable.create(observer => {
@@ -53,29 +64,36 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
                 stream.on("data", data => observer.next(data));
             });
         }
+        static create(emitter) {
+            return Observable.unsubscribable(_1.Generators.create, emitter);
+        }
+        static unsubscribable(generator, ...args) {
+            let unsubscribe = () => { };
+            return new Observable(generator(cb => unsubscribe = cb, ...args), () => unsubscribe());
+        }
         count(predicate) {
-            return new Observable(_1.Operators.count(this, predicate));
+            return new Observable(_1.Operators.count(this, predicate), this.unsubscribe);
         }
         max(comparer) {
-            return new Observable(_1.Operators.max(this, comparer));
+            return new Observable(_1.Operators.max(this, comparer), this.unsubscribe);
         }
         min(comparer) {
-            return new Observable(_1.Operators.min(this, comparer));
+            return new Observable(_1.Operators.min(this, comparer), this.unsubscribe);
         }
         reduce(fn, seed) {
-            return new Observable(_1.Operators.reduce(this, fn, seed));
+            return new Observable(_1.Operators.reduce(this, fn, seed), this.unsubscribe);
         }
         where(fn) {
             return this.filter(fn);
         }
         filter(fn) {
-            return new Observable(_1.Operators.filter(this, fn));
+            return new Observable(_1.Operators.filter(this, fn), this.unsubscribe);
         }
         map(fn) {
-            return new Observable(_1.Operators.map(this, fn));
+            return new Observable(_1.Operators.map(this, fn), this.unsubscribe);
         }
         flatMap(fn) {
-            return new Observable(_1.Operators.flatMap(this, fn));
+            return new Observable(_1.Operators.flatMap(this, fn), this.unsubscribe);
         }
         checkValid() {
             return this.filter(v => v !== undefined && v !== null);
@@ -84,7 +102,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
             return this.forEach(fn);
         }
         forEach(fn) {
-            return new Observable(_1.Operators.forEach(this, fn));
+            return new Observable(_1.Operators.forEach(this, fn), this.unsubscribe);
         }
         toArray() {
             return __awaiter(this, void 0, void 0, function* () {
@@ -114,7 +132,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
             });
         }
         subscribe(subscriber) {
-            let cancelled = false;
+            let unsubscribed = false;
             const observer = subscriber instanceof observer_1.Observer
                 ? subscriber
                 : new observer_1.Observer(subscriber);
@@ -123,7 +141,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
                     try {
                         for (var _a = __asyncValues(this), _b; _b = yield _a.next(), !_b.done;) {
                             const data = yield _b.value;
-                            if (cancelled)
+                            if (unsubscribed)
                                 break;
                             const r = observer.next(data);
                             if (r instanceof Promise) {
@@ -152,7 +170,10 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
                 var e_2, _c;
             }))();
             return {
-                cancel: () => cancelled = true,
+                unsubscribe: () => {
+                    unsubscribed = true;
+                    this.unsubscribe();
+                },
                 wait: promise
             };
         }

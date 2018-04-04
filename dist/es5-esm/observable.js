@@ -41,31 +41,45 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
 import { Observer } from "./observer";
 import { Generators as AsyncGenerators, Operators as AsyncOperators } from "./operators/";
 var Observable = (function () {
-    function Observable(ai) {
+    function Observable(ai, unsubscribe) {
+        this.unsubscribe = unsubscribe;
         Object.assign(this, ai);
     }
-    Observable.callback = function (val, fn) {
-        return new Observable(AsyncGenerators.callback(val, fn));
-    };
     Observable.interval = function (ms, max) {
-        return new Observable(AsyncGenerators.interval(ms, max));
+        return Observable.unsubscribable(AsyncGenerators.interval, ms, max);
     };
     Observable.of = function () {
         var values = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             values[_i] = arguments[_i];
         }
-        return new Observable(AsyncGenerators.of.apply(AsyncGenerators, values));
+        return Observable.unsubscribable.apply(Observable, [AsyncGenerators.of].concat(values));
     };
     Observable.range = function (from, to, step) {
         if (step === void 0) { step = 1; }
-        return new Observable(AsyncGenerators.range(from, to, step));
+        return Observable.unsubscribable(AsyncGenerators.range, from, to, step);
     };
     Observable.fibonacci = function (iterations) {
-        return new Observable(AsyncGenerators.fibonacci(iterations));
+        return Observable.unsubscribable(AsyncGenerators.fibonacci, iterations);
     };
-    Observable.create = function (emitter) {
-        return new Observable(AsyncGenerators.create(emitter));
+    Observable.random = function (min, max, count) {
+        if (min === void 0) { min = 0; }
+        if (max === void 0) { max = 1; }
+        if (count === void 0) { count = Infinity; }
+        return Observable.unsubscribable(AsyncGenerators.random, min, max, count);
+    };
+    Observable.callback = function (val, fn) {
+        return Observable.create(function (observer) {
+            fn(val, function (err, v) {
+                if (err) {
+                    observer.throw(err);
+                }
+                else {
+                    observer.next(v);
+                    observer.return();
+                }
+            });
+        });
     };
     Observable.listen = function (stream) {
         return Observable.create(function (observer) {
@@ -74,29 +88,40 @@ var Observable = (function () {
             stream.on("data", function (data) { return observer.next(data); });
         });
     };
+    Observable.create = function (emitter) {
+        return Observable.unsubscribable(AsyncGenerators.create, emitter);
+    };
+    Observable.unsubscribable = function (generator) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        var unsubscribe = function () { };
+        return new Observable(generator.apply(void 0, [function (cb) { return unsubscribe = cb; }].concat(args)), function () { return unsubscribe(); });
+    };
     Observable.prototype.count = function (predicate) {
-        return new Observable(AsyncOperators.count(this, predicate));
+        return new Observable(AsyncOperators.count(this, predicate), this.unsubscribe);
     };
     Observable.prototype.max = function (comparer) {
-        return new Observable(AsyncOperators.max(this, comparer));
+        return new Observable(AsyncOperators.max(this, comparer), this.unsubscribe);
     };
     Observable.prototype.min = function (comparer) {
-        return new Observable(AsyncOperators.min(this, comparer));
+        return new Observable(AsyncOperators.min(this, comparer), this.unsubscribe);
     };
     Observable.prototype.reduce = function (fn, seed) {
-        return new Observable(AsyncOperators.reduce(this, fn, seed));
+        return new Observable(AsyncOperators.reduce(this, fn, seed), this.unsubscribe);
     };
     Observable.prototype.where = function (fn) {
         return this.filter(fn);
     };
     Observable.prototype.filter = function (fn) {
-        return new Observable(AsyncOperators.filter(this, fn));
+        return new Observable(AsyncOperators.filter(this, fn), this.unsubscribe);
     };
     Observable.prototype.map = function (fn) {
-        return new Observable(AsyncOperators.map(this, fn));
+        return new Observable(AsyncOperators.map(this, fn), this.unsubscribe);
     };
     Observable.prototype.flatMap = function (fn) {
-        return new Observable(AsyncOperators.flatMap(this, fn));
+        return new Observable(AsyncOperators.flatMap(this, fn), this.unsubscribe);
     };
     Observable.prototype.checkValid = function () {
         return this.filter(function (v) { return v !== undefined && v !== null; });
@@ -105,7 +130,7 @@ var Observable = (function () {
         return this.forEach(fn);
     };
     Observable.prototype.forEach = function (fn) {
-        return new Observable(AsyncOperators.forEach(this, fn));
+        return new Observable(AsyncOperators.forEach(this, fn), this.unsubscribe);
     };
     Observable.prototype.toArray = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -159,7 +184,7 @@ var Observable = (function () {
     };
     Observable.prototype.subscribe = function (subscriber) {
         var _this = this;
-        var cancelled = false;
+        var unsubscribed = false;
         var observer = subscriber instanceof Observer
             ? subscriber
             : new Observer(subscriber);
@@ -180,7 +205,7 @@ var Observable = (function () {
                         return [4, _b.value];
                     case 4:
                         data = _d.sent();
-                        if (cancelled)
+                        if (unsubscribed)
                             return [3, 7];
                         r_1 = observer.next(data);
                         if (!(r_1 instanceof Promise)) return [3, 6];
@@ -228,7 +253,10 @@ var Observable = (function () {
             });
         }); })();
         return {
-            cancel: function () { return cancelled = true; },
+            unsubscribe: function () {
+                unsubscribed = true;
+                _this.unsubscribe();
+            },
             wait: promise
         };
     };

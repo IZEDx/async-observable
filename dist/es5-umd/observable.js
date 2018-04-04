@@ -52,31 +52,45 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     var observer_1 = require("./observer");
     var _1 = require("./operators/");
     var Observable = (function () {
-        function Observable(ai) {
+        function Observable(ai, unsubscribe) {
+            this.unsubscribe = unsubscribe;
             Object.assign(this, ai);
         }
-        Observable.callback = function (val, fn) {
-            return new Observable(_1.Generators.callback(val, fn));
-        };
         Observable.interval = function (ms, max) {
-            return new Observable(_1.Generators.interval(ms, max));
+            return Observable.unsubscribable(_1.Generators.interval, ms, max);
         };
         Observable.of = function () {
             var values = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 values[_i] = arguments[_i];
             }
-            return new Observable(_1.Generators.of.apply(_1.Generators, values));
+            return Observable.unsubscribable.apply(Observable, [_1.Generators.of].concat(values));
         };
         Observable.range = function (from, to, step) {
             if (step === void 0) { step = 1; }
-            return new Observable(_1.Generators.range(from, to, step));
+            return Observable.unsubscribable(_1.Generators.range, from, to, step);
         };
         Observable.fibonacci = function (iterations) {
-            return new Observable(_1.Generators.fibonacci(iterations));
+            return Observable.unsubscribable(_1.Generators.fibonacci, iterations);
         };
-        Observable.create = function (emitter) {
-            return new Observable(_1.Generators.create(emitter));
+        Observable.random = function (min, max, count) {
+            if (min === void 0) { min = 0; }
+            if (max === void 0) { max = 1; }
+            if (count === void 0) { count = Infinity; }
+            return Observable.unsubscribable(_1.Generators.random, min, max, count);
+        };
+        Observable.callback = function (val, fn) {
+            return Observable.create(function (observer) {
+                fn(val, function (err, v) {
+                    if (err) {
+                        observer.throw(err);
+                    }
+                    else {
+                        observer.next(v);
+                        observer.return();
+                    }
+                });
+            });
         };
         Observable.listen = function (stream) {
             return Observable.create(function (observer) {
@@ -85,29 +99,40 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
                 stream.on("data", function (data) { return observer.next(data); });
             });
         };
+        Observable.create = function (emitter) {
+            return Observable.unsubscribable(_1.Generators.create, emitter);
+        };
+        Observable.unsubscribable = function (generator) {
+            var args = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                args[_i - 1] = arguments[_i];
+            }
+            var unsubscribe = function () { };
+            return new Observable(generator.apply(void 0, [function (cb) { return unsubscribe = cb; }].concat(args)), function () { return unsubscribe(); });
+        };
         Observable.prototype.count = function (predicate) {
-            return new Observable(_1.Operators.count(this, predicate));
+            return new Observable(_1.Operators.count(this, predicate), this.unsubscribe);
         };
         Observable.prototype.max = function (comparer) {
-            return new Observable(_1.Operators.max(this, comparer));
+            return new Observable(_1.Operators.max(this, comparer), this.unsubscribe);
         };
         Observable.prototype.min = function (comparer) {
-            return new Observable(_1.Operators.min(this, comparer));
+            return new Observable(_1.Operators.min(this, comparer), this.unsubscribe);
         };
         Observable.prototype.reduce = function (fn, seed) {
-            return new Observable(_1.Operators.reduce(this, fn, seed));
+            return new Observable(_1.Operators.reduce(this, fn, seed), this.unsubscribe);
         };
         Observable.prototype.where = function (fn) {
             return this.filter(fn);
         };
         Observable.prototype.filter = function (fn) {
-            return new Observable(_1.Operators.filter(this, fn));
+            return new Observable(_1.Operators.filter(this, fn), this.unsubscribe);
         };
         Observable.prototype.map = function (fn) {
-            return new Observable(_1.Operators.map(this, fn));
+            return new Observable(_1.Operators.map(this, fn), this.unsubscribe);
         };
         Observable.prototype.flatMap = function (fn) {
-            return new Observable(_1.Operators.flatMap(this, fn));
+            return new Observable(_1.Operators.flatMap(this, fn), this.unsubscribe);
         };
         Observable.prototype.checkValid = function () {
             return this.filter(function (v) { return v !== undefined && v !== null; });
@@ -116,7 +141,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
             return this.forEach(fn);
         };
         Observable.prototype.forEach = function (fn) {
-            return new Observable(_1.Operators.forEach(this, fn));
+            return new Observable(_1.Operators.forEach(this, fn), this.unsubscribe);
         };
         Observable.prototype.toArray = function () {
             return __awaiter(this, void 0, void 0, function () {
@@ -170,7 +195,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
         };
         Observable.prototype.subscribe = function (subscriber) {
             var _this = this;
-            var cancelled = false;
+            var unsubscribed = false;
             var observer = subscriber instanceof observer_1.Observer
                 ? subscriber
                 : new observer_1.Observer(subscriber);
@@ -191,7 +216,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
                             return [4, _b.value];
                         case 4:
                             data = _d.sent();
-                            if (cancelled)
+                            if (unsubscribed)
                                 return [3, 7];
                             r_1 = observer.next(data);
                             if (!(r_1 instanceof Promise)) return [3, 6];
@@ -239,7 +264,10 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
                 });
             }); })();
             return {
-                cancel: function () { return cancelled = true; },
+                unsubscribe: function () {
+                    unsubscribed = true;
+                    _this.unsubscribe();
+                },
                 wait: promise
             };
         };

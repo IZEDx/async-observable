@@ -56,7 +56,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    it = _1.Generators.create(function (observer) {
+                    it = _1.Observable.create(function (observer) {
                         observer.next(0);
                         observer.next(1);
                         observer.next(2);
