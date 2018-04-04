@@ -3,7 +3,5 @@ node_modules/
 npm-debug.log
 ts-node-*/
 .cache/
-dist/*/*.map
-dist/*/*/*.map
 .nyc_output
 coverage/
