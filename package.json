@@ -21,7 +21,7 @@
     "coverage": "./node_modules/.bin/nyc report --reporter=text",
     "docs": "rm -rf docs && ./node_modules/.bin/typedoc --name async-observable --readme README.md --module commonjs --target ES5 --excludeExternals --out docs --theme default src/ && touch docs/.nojekyll",
     "clean-up": "rm -rf ts-node-* & rm -rf .nyc_output",
-    "publish": "npm run build-all && npm run publish"
+    "deploy": "npm run build-all && npm publish"
   },
   "repository": {
     "type": "git",
@@ -51,6 +51,6 @@
     "typescript": "next"
   },
   "dependencies": {
-    "@types/node": "^8.0.53"
+    "@types/node": "^8.10.2"
   }
 }
