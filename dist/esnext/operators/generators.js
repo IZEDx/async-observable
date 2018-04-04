@@ -1,4 +1,4 @@
-import { AsyncObserver } from "../observer";
+import { BufferedObserver } from "../observer";
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 export function callback(val, fn) {
     return create(observer => {
@@ -8,8 +8,8 @@ export function callback(val, fn) {
             }
             else {
                 observer.next(v);
+                observer.return();
             }
-            observer.return();
         });
     });
 }
@@ -43,62 +43,12 @@ export async function* random(min = 0, max = 1, count = Infinity) {
         yield min + Math.random() * (max - min);
     }
 }
-export function create(creator) {
+export function create(emitter) {
     return {
         [Symbol.asyncIterator]() {
-            let waitingNext = null;
-            let waitingError;
-            const resultQueue = [];
-            let thrownError;
-            creator(new AsyncObserver({
-                next(value) {
-                    if (thrownError !== undefined)
-                        return;
-                    if (waitingNext === null) {
-                        resultQueue.push({ value, done: false });
-                    }
-                    else {
-                        waitingNext({ value, done: false });
-                        waitingNext = null;
-                    }
-                },
-                return() {
-                    if (thrownError !== undefined)
-                        return;
-                    if (waitingNext === null) {
-                        resultQueue.push({ value: undefined, done: true });
-                    }
-                    else {
-                        waitingNext({ value: undefined, done: true });
-                        waitingNext = null;
-                    }
-                },
-                throw(err) {
-                    if (waitingError === undefined) {
-                        thrownError = err;
-                    }
-                    else {
-                        waitingError(err);
-                    }
-                }
-            }));
-            return {
-                next() {
-                    return new Promise((resolve, reject) => {
-                        waitingError = reject;
-                        if (resultQueue.length === 0) {
-                            if (thrownError !== undefined) {
-                                reject(thrownError);
-                                return;
-                            }
-                            waitingNext = resolve;
-                            return;
-                        }
-                        resolve(resultQueue[0]);
-                        resultQueue.splice(0, 1);
-                    });
-                }
-            };
+            let observer = new BufferedObserver();
+            emitter(observer);
+            return { next: () => observer.wait() };
         }
     };
 }

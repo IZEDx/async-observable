@@ -75,8 +75,8 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
         Observable.fibonacci = function (iterations) {
             return new Observable(_1.Generators.fibonacci(iterations));
         };
-        Observable.create = function (creator) {
-            return new Observable(_1.Generators.create(creator));
+        Observable.create = function (emitter) {
+            return new Observable(_1.Generators.create(emitter));
         };
         Observable.listen = function (stream) {
             return Observable.create(function (observer) {
@@ -97,6 +97,9 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
         Observable.prototype.reduce = function (fn, seed) {
             return new Observable(_1.Operators.reduce(this, fn, seed));
         };
+        Observable.prototype.where = function (fn) {
+            return this.filter(fn);
+        };
         Observable.prototype.filter = function (fn) {
             return new Observable(_1.Operators.filter(this, fn));
         };
@@ -115,6 +118,49 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
         Observable.prototype.forEach = function (fn) {
             return new Observable(_1.Operators.forEach(this, fn));
         };
+        Observable.prototype.toArray = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                var elements, _a, _b, el, e_1_1, e_1, _c;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            elements = [];
+                            _d.label = 1;
+                        case 1:
+                            _d.trys.push([1, 7, 8, 13]);
+                            _a = __asyncValues(this);
+                            _d.label = 2;
+                        case 2: return [4, _a.next()];
+                        case 3:
+                            if (!(_b = _d.sent(), !_b.done)) return [3, 6];
+                            return [4, _b.value];
+                        case 4:
+                            el = _d.sent();
+                            elements.push(el);
+                            _d.label = 5;
+                        case 5: return [3, 2];
+                        case 6: return [3, 13];
+                        case 7:
+                            e_1_1 = _d.sent();
+                            e_1 = { error: e_1_1 };
+                            return [3, 13];
+                        case 8:
+                            _d.trys.push([8, , 11, 12]);
+                            if (!(_b && !_b.done && (_c = _a.return))) return [3, 10];
+                            return [4, _c.call(_a)];
+                        case 9:
+                            _d.sent();
+                            _d.label = 10;
+                        case 10: return [3, 12];
+                        case 11:
+                            if (e_1) throw e_1.error;
+                            return [7];
+                        case 12: return [7];
+                        case 13: return [2, elements];
+                    }
+                });
+            });
+        };
         Observable.prototype.assign = function (object, key) {
             return this.subscribe({
                 next: function (val) {
@@ -125,15 +171,15 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
         Observable.prototype.subscribe = function (subscriber) {
             var _this = this;
             var cancelled = false;
-            var observer = subscriber instanceof observer_1.AsyncObserver
+            var observer = subscriber instanceof observer_1.Observer
                 ? subscriber
-                : new observer_1.AsyncObserver(subscriber);
-            var subscription = (function () { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, data, r_1, e_1_1, e_2, r_2, r, e_1, _c;
+                : new observer_1.Observer(subscriber);
+            var promise = (function () { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, data, r_1, e_2_1, r, e_3, r, e_2, _c;
                 return __generator(this, function (_d) {
                     switch (_d.label) {
                         case 0:
-                            _d.trys.push([0, 15, , 18]);
+                            _d.trys.push([0, 17, , 20]);
                             _d.label = 1;
                         case 1:
                             _d.trys.push([1, 8, 9, 14]);
@@ -156,8 +202,8 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
                         case 6: return [3, 2];
                         case 7: return [3, 14];
                         case 8:
-                            e_1_1 = _d.sent();
-                            e_1 = { error: e_1_1 };
+                            e_2_1 = _d.sent();
+                            e_2 = { error: e_2_1 };
                             return [3, 14];
                         case 9:
                             _d.trys.push([9, , 12, 13]);
@@ -168,33 +214,33 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
                             _d.label = 11;
                         case 11: return [3, 13];
                         case 12:
-                            if (e_1) throw e_1.error;
+                            if (e_2) throw e_2.error;
                             return [7];
                         case 13: return [7];
-                        case 14: return [3, 18];
-                        case 15:
-                            e_2 = _d.sent();
-                            r_2 = observer.throw(e_2);
-                            if (!(r_2 instanceof Promise)) return [3, 17];
-                            return [4, r_2];
-                        case 16:
-                            _d.sent();
-                            _d.label = 17;
-                        case 17: return [3, 18];
-                        case 18:
+                        case 14:
                             r = observer.return();
-                            if (!(r instanceof Promise)) return [3, 20];
+                            if (!(r instanceof Promise)) return [3, 16];
                             return [4, r];
-                        case 19:
+                        case 15:
                             _d.sent();
-                            _d.label = 20;
+                            _d.label = 16;
+                        case 16: return [3, 20];
+                        case 17:
+                            e_3 = _d.sent();
+                            r = observer.throw(e_3);
+                            if (!(r instanceof Promise)) return [3, 19];
+                            return [4, r];
+                        case 18:
+                            _d.sent();
+                            _d.label = 19;
+                        case 19: return [3, 20];
                         case 20: return [2];
                     }
                 });
             }); })();
             return {
                 cancel: function () { return cancelled = true; },
-                wait: subscription
+                wait: promise
             };
         };
         return Observable;

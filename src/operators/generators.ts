@@ -1,6 +1,5 @@
 
-import { Observer, Emitter, BufferedObserver, ObserverError } from "../observer";
-import { Optional } from "..";
+import { Emitter, BufferedObserver } from "../observer";
 
 const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 

@@ -11,7 +11,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     var m = o[Symbol.asyncIterator];
     return m ? m.call(o) : typeof __values === "function" ? __values(o) : o[Symbol.iterator]();
 };
-import { AsyncObserver } from "./observer";
+import { Observer } from "./observer";
 import { Generators as AsyncGenerators, Operators as AsyncOperators } from "./operators/";
 export class Observable {
     constructor(ai) {
@@ -32,8 +32,8 @@ export class Observable {
     static fibonacci(iterations) {
         return new Observable(AsyncGenerators.fibonacci(iterations));
     }
-    static create(creator) {
-        return new Observable(AsyncGenerators.create(creator));
+    static create(emitter) {
+        return new Observable(AsyncGenerators.create(emitter));
     }
     static listen(stream) {
         return Observable.create(observer => {
@@ -54,6 +54,9 @@ export class Observable {
     reduce(fn, seed) {
         return new Observable(AsyncOperators.reduce(this, fn, seed));
     }
+    where(fn) {
+        return this.filter(fn);
+    }
     filter(fn) {
         return new Observable(AsyncOperators.filter(this, fn));
     }
@@ -72,6 +75,26 @@ export class Observable {
     forEach(fn) {
         return new Observable(AsyncOperators.forEach(this, fn));
     }
+    toArray() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const elements = [];
+            try {
+                for (var _a = __asyncValues(this), _b; _b = yield _a.next(), !_b.done;) {
+                    const el = yield _b.value;
+                    elements.push(el);
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_b && !_b.done && (_c = _a.return)) yield _c.call(_a);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            return elements;
+            var e_1, _c;
+        });
+    }
     assign(object, key) {
         return this.subscribe({
             next: val => {
@@ -81,10 +104,10 @@ export class Observable {
     }
     subscribe(subscriber) {
         let cancelled = false;
-        const observer = subscriber instanceof AsyncObserver
+        const observer = subscriber instanceof Observer
             ? subscriber
-            : new AsyncObserver(subscriber);
-        const subscription = (() => __awaiter(this, void 0, void 0, function* () {
+            : new Observer(subscriber);
+        const promise = (() => __awaiter(this, void 0, void 0, function* () {
             try {
                 try {
                     for (var _a = __asyncValues(this), _b; _b = yield _a.next(), !_b.done;) {
@@ -97,12 +120,16 @@ export class Observable {
                         }
                     }
                 }
-                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
                 finally {
                     try {
                         if (_b && !_b.done && (_c = _a.return)) yield _c.call(_a);
                     }
-                    finally { if (e_1) throw e_1.error; }
+                    finally { if (e_2) throw e_2.error; }
+                }
+                const r = observer.return();
+                if (r instanceof Promise) {
+                    yield r;
                 }
             }
             catch (e) {
@@ -111,15 +138,11 @@ export class Observable {
                     yield r;
                 }
             }
-            const r = observer.return();
-            if (r instanceof Promise) {
-                yield r;
-            }
-            var e_1, _c;
+            var e_2, _c;
         }))();
         return {
             cancel: () => cancelled = true,
-            wait: subscription
+            wait: promise
         };
     }
 }

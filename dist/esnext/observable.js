@@ -1,4 +1,4 @@
-import { AsyncObserver } from "./observer";
+import { Observer } from "./observer";
 import { Generators as AsyncGenerators, Operators as AsyncOperators } from "./operators/";
 export class Observable {
     constructor(ai) {
@@ -19,8 +19,8 @@ export class Observable {
     static fibonacci(iterations) {
         return new Observable(AsyncGenerators.fibonacci(iterations));
     }
-    static create(creator) {
-        return new Observable(AsyncGenerators.create(creator));
+    static create(emitter) {
+        return new Observable(AsyncGenerators.create(emitter));
     }
     static listen(stream) {
         return Observable.create(observer => {
@@ -41,6 +41,9 @@ export class Observable {
     reduce(fn, seed) {
         return new Observable(AsyncOperators.reduce(this, fn, seed));
     }
+    where(fn) {
+        return this.filter(fn);
+    }
     filter(fn) {
         return new Observable(AsyncOperators.filter(this, fn));
     }
@@ -59,6 +62,13 @@ export class Observable {
     forEach(fn) {
         return new Observable(AsyncOperators.forEach(this, fn));
     }
+    async toArray() {
+        const elements = [];
+        for await (const el of this) {
+            elements.push(el);
+        }
+        return elements;
+    }
     assign(object, key) {
         return this.subscribe({
             next: val => {
@@ -68,10 +78,10 @@ export class Observable {
     }
     subscribe(subscriber) {
         let cancelled = false;
-        const observer = subscriber instanceof AsyncObserver
+        const observer = subscriber instanceof Observer
             ? subscriber
-            : new AsyncObserver(subscriber);
-        const subscription = (async () => {
+            : new Observer(subscriber);
+        const promise = (async () => {
             try {
                 for await (const data of this) {
                     if (cancelled)
@@ -81,6 +91,10 @@ export class Observable {
                         await r;
                     }
                 }
+                const r = observer.return();
+                if (r instanceof Promise) {
+                    await r;
+                }
             }
             catch (e) {
                 const r = observer.throw(e);
@@ -88,14 +102,10 @@ export class Observable {
                     await r;
                 }
             }
-            const r = observer.return();
-            if (r instanceof Promise) {
-                await r;
-            }
         })();
         return {
             cancel: () => cancelled = true,
-            wait: subscription
+            wait: promise
         };
     }
 }

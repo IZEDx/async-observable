@@ -43,8 +43,8 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
         static fibonacci(iterations) {
             return new Observable(_1.Generators.fibonacci(iterations));
         }
-        static create(creator) {
-            return new Observable(_1.Generators.create(creator));
+        static create(emitter) {
+            return new Observable(_1.Generators.create(emitter));
         }
         static listen(stream) {
             return Observable.create(observer => {
@@ -65,6 +65,9 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
         reduce(fn, seed) {
             return new Observable(_1.Operators.reduce(this, fn, seed));
         }
+        where(fn) {
+            return this.filter(fn);
+        }
         filter(fn) {
             return new Observable(_1.Operators.filter(this, fn));
         }
@@ -83,6 +86,26 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
         forEach(fn) {
             return new Observable(_1.Operators.forEach(this, fn));
         }
+        toArray() {
+            return __awaiter(this, void 0, void 0, function* () {
+                const elements = [];
+                try {
+                    for (var _a = __asyncValues(this), _b; _b = yield _a.next(), !_b.done;) {
+                        const el = yield _b.value;
+                        elements.push(el);
+                    }
+                }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (_b && !_b.done && (_c = _a.return)) yield _c.call(_a);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                }
+                return elements;
+                var e_1, _c;
+            });
+        }
         assign(object, key) {
             return this.subscribe({
                 next: val => {
@@ -92,10 +115,10 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
         }
         subscribe(subscriber) {
             let cancelled = false;
-            const observer = subscriber instanceof observer_1.AsyncObserver
+            const observer = subscriber instanceof observer_1.Observer
                 ? subscriber
-                : new observer_1.AsyncObserver(subscriber);
-            const subscription = (() => __awaiter(this, void 0, void 0, function* () {
+                : new observer_1.Observer(subscriber);
+            const promise = (() => __awaiter(this, void 0, void 0, function* () {
                 try {
                     try {
                         for (var _a = __asyncValues(this), _b; _b = yield _a.next(), !_b.done;) {
@@ -108,12 +131,16 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
                             }
                         }
                     }
-                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                    catch (e_2_1) { e_2 = { error: e_2_1 }; }
                     finally {
                         try {
                             if (_b && !_b.done && (_c = _a.return)) yield _c.call(_a);
                         }
-                        finally { if (e_1) throw e_1.error; }
+                        finally { if (e_2) throw e_2.error; }
+                    }
+                    const r = observer.return();
+                    if (r instanceof Promise) {
+                        yield r;
                     }
                 }
                 catch (e) {
@@ -122,15 +149,11 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
                         yield r;
                     }
                 }
-                const r = observer.return();
-                if (r instanceof Promise) {
-                    yield r;
-                }
-                var e_1, _c;
+                var e_2, _c;
             }))();
             return {
                 cancel: () => cancelled = true,
-                wait: subscription
+                wait: promise
             };
         }
     }

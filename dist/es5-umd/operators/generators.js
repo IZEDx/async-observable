@@ -58,8 +58,8 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
                 }
                 else {
                     observer.next(v);
+                    observer.return();
                 }
-                observer.return();
             });
         });
     }
@@ -203,62 +203,12 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
         });
     }
     exports.random = random;
-    function create(creator) {
+    function create(emitter) {
         return _a = {},
             _a[Symbol.asyncIterator] = function () {
-                var waitingNext = null;
-                var waitingError;
-                var resultQueue = [];
-                var thrownError;
-                creator(new observer_1.AsyncObserver({
-                    next: function (value) {
-                        if (thrownError !== undefined)
-                            return;
-                        if (waitingNext === null) {
-                            resultQueue.push({ value: value, done: false });
-                        }
-                        else {
-                            waitingNext({ value: value, done: false });
-                            waitingNext = null;
-                        }
-                    },
-                    return: function () {
-                        if (thrownError !== undefined)
-                            return;
-                        if (waitingNext === null) {
-                            resultQueue.push({ value: undefined, done: true });
-                        }
-                        else {
-                            waitingNext({ value: undefined, done: true });
-                            waitingNext = null;
-                        }
-                    },
-                    throw: function (err) {
-                        if (waitingError === undefined) {
-                            thrownError = err;
-                        }
-                        else {
-                            waitingError(err);
-                        }
-                    }
-                }));
-                return {
-                    next: function () {
-                        return new Promise(function (resolve, reject) {
-                            waitingError = reject;
-                            if (resultQueue.length === 0) {
-                                if (thrownError !== undefined) {
-                                    reject(thrownError);
-                                    return;
-                                }
-                                waitingNext = resolve;
-                                return;
-                            }
-                            resolve(resultQueue[0]);
-                            resultQueue.splice(0, 1);
-                        });
-                    }
-                };
+                var observer = new observer_1.BufferedObserver();
+                emitter(observer);
+                return { next: function () { return observer.wait(); } };
             },
             _a;
         var _a;
