@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>AsyncObserver | async-observable</title>
+	<title>Observer | async-observable</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,10 +57,10 @@
 					<a href="../modules/_observer_.html">&quot;observer&quot;</a>
 				</li>
 				<li>
-					<a href="_observer_.asyncobserver.html">AsyncObserver</a>
+					<a href="_observer_.observer.html">Observer</a>
 				</li>
 			</ul>
-			<h1>Class AsyncObserver&lt;T&gt;</h1>
+			<h1>Class Observer&lt;T&gt;</h1>
 		</div>
 	</div>
 </header>
@@ -79,7 +79,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">AsyncObserver</span>
+						<span class="target">Observer</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="_observer_.bufferedobserver.html" class="tsd-signature-type">BufferedObserver</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -96,21 +101,21 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_observer_.asyncobserver.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_observer_.observer.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_observer_.asyncobserver.html#obs" class="tsd-kind-icon">obs</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_observer_.observer.html#obs" class="tsd-kind-icon">obs</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_observer_.asyncobserver.html#next" class="tsd-kind-icon">next</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_observer_.asyncobserver.html#return" class="tsd-kind-icon">return</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_observer_.asyncobserver.html#throw" class="tsd-kind-icon">throw</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_observer_.observer.html#next" class="tsd-kind-icon">next</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_observer_.observer.html#return" class="tsd-kind-icon">return</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_observer_.observer.html#throw" class="tsd-kind-icon">throw</a></li>
 							</ul>
 						</section>
 					</div>
@@ -122,13 +127,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Async<wbr>Observer<span class="tsd-signature-symbol">(</span>obs<span class="tsd-signature-symbol">: </span><a href="../interfaces/_observer_.iobserver.html" class="tsd-signature-type">IObserver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_observer_.asyncobserver.html" class="tsd-signature-type">AsyncObserver</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Observer<span class="tsd-signature-symbol">(</span>obs<span class="tsd-signature-symbol">: </span><a href="../interfaces/_observer_.iobserver.html" class="tsd-signature-type">IObserver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_observer_.observer.html" class="tsd-signature-type">Observer</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/9234342/src/observer.ts#L12">observer.ts:12</a></li>
+									<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/7daf8a0/src/observer.ts#L15">observer.ts:15</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -137,7 +142,7 @@
 									<h5>obs: <a href="../interfaces/_observer_.iobserver.html" class="tsd-signature-type">IObserver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_observer_.asyncobserver.html" class="tsd-signature-type">AsyncObserver</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_observer_.observer.html" class="tsd-signature-type">Observer</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -150,7 +155,7 @@
 					<div class="tsd-signature tsd-kind-icon">obs<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_observer_.iobserver.html" class="tsd-signature-type">IObserver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/9234342/src/observer.ts#L14">observer.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/7daf8a0/src/observer.ts#L17">observer.ts:17</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -161,14 +166,14 @@
 					<a name="next" class="tsd-anchor"></a>
 					<h3>next</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">next<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">next<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_index_.html#maybepromise" class="tsd-signature-type">MaybePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_observer_.iobserver.html">IObserver</a>.<a href="../interfaces/_observer_.iobserver.html#next">next</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/9234342/src/observer.ts#L17">observer.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/7daf8a0/src/observer.ts#L20">observer.ts:20</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -177,10 +182,7 @@
 									<h5>value: <span class="tsd-signature-type">T</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span>
-								<span class="tsd-signature-symbol"> | </span>
-								<span class="tsd-signature-type">void</span>
-							</h4>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/_index_.html#maybepromise" class="tsd-signature-type">MaybePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -188,20 +190,17 @@
 					<a name="return" class="tsd-anchor"></a>
 					<h3>return</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">return<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">return<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_index_.html#maybepromise" class="tsd-signature-type">MaybePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_observer_.iobserver.html">IObserver</a>.<a href="../interfaces/_observer_.iobserver.html#return">return</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/9234342/src/observer.ts#L21">observer.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/7daf8a0/src/observer.ts#L24">observer.ts:24</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span>
-								<span class="tsd-signature-symbol"> | </span>
-								<span class="tsd-signature-type">void</span>
-							</h4>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/_index_.html#maybepromise" class="tsd-signature-type">MaybePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -209,14 +208,14 @@
 					<a name="throw" class="tsd-anchor"></a>
 					<h3>throw</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">throw<span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">throw<span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_index_.html#maybepromise" class="tsd-signature-type">MaybePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_observer_.iobserver.html">IObserver</a>.<a href="../interfaces/_observer_.iobserver.html#throw">throw</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/9234342/src/observer.ts#L27">observer.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/7daf8a0/src/observer.ts#L30">observer.ts:30</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -225,10 +224,7 @@
 									<h5>error: <span class="tsd-signature-type">Error</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span>
-								<span class="tsd-signature-symbol"> | </span>
-								<span class="tsd-signature-type">void</span>
-							</h4>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/_index_.html#maybepromise" class="tsd-signature-type">MaybePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -239,6 +235,9 @@
 				<ul>
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_debug_.html">"debug"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_index_.html">"index"</a>
@@ -271,35 +270,41 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_observer_.bufferedobserver.html" class="tsd-kind-icon">Buffered<wbr>Observer</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="_observer_.asyncobserver.html" class="tsd-kind-icon">Async<wbr>Observer</a>
+						<a href="_observer_.observer.html" class="tsd-kind-icon">Observer</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_observer_.asyncobserver.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="_observer_.observer.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="_observer_.asyncobserver.html#obs" class="tsd-kind-icon">obs</a>
+								<a href="_observer_.observer.html#obs" class="tsd-kind-icon">obs</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_observer_.asyncobserver.html#next" class="tsd-kind-icon">next</a>
+								<a href="_observer_.observer.html#next" class="tsd-kind-icon">next</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_observer_.asyncobserver.html#return" class="tsd-kind-icon">return</a>
+								<a href="_observer_.observer.html#return" class="tsd-kind-icon">return</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_observer_.asyncobserver.html#throw" class="tsd-kind-icon">throw</a>
+								<a href="_observer_.observer.html#throw" class="tsd-kind-icon">throw</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_observer_.observererror.html" class="tsd-kind-icon">Observer<wbr>Error</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../interfaces/_observer_.iobserver.html" class="tsd-kind-icon">IObserver</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="../modules/_observer_.html#observerfunction" class="tsd-kind-icon">Observer<wbr>Function</a>
+						<a href="../modules/_observer_.html#emitter" class="tsd-kind-icon">Emitter</a>
 					</li>
 				</ul>
 			</nav>

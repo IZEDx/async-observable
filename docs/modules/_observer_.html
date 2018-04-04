@@ -71,7 +71,9 @@
 						<section class="tsd-index-section ">
 							<h3>Classes</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/_observer_.asyncobserver.html" class="tsd-kind-icon">Async<wbr>Observer</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/_observer_.bufferedobserver.html" class="tsd-kind-icon">Buffered<wbr>Observer</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/_observer_.observer.html" class="tsd-kind-icon">Observer</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_observer_.observererror.html" class="tsd-kind-icon">Observer<wbr>Error</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -83,7 +85,7 @@
 						<section class="tsd-index-section ">
 							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_observer_.html#observerfunction" class="tsd-kind-icon">Observer<wbr>Function</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_observer_.html#emitter" class="tsd-kind-icon">Emitter</a></li>
 							</ul>
 						</section>
 					</div>
@@ -92,12 +94,12 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Type aliases</h2>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
-					<a name="observerfunction" class="tsd-anchor"></a>
-					<h3>Observer<wbr>Function</h3>
-					<div class="tsd-signature tsd-kind-icon">Observer<wbr>Function<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
+					<a name="emitter" class="tsd-anchor"></a>
+					<h3>Emitter</h3>
+					<div class="tsd-signature tsd-kind-icon">Emitter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/9234342/src/observer.ts#L34">observer.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/IZEDx/async-observable/blob/7daf8a0/src/observer.ts#L37">observer.ts:37</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -105,14 +107,14 @@
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-siganture">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias tsd-is-not-exported">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>observer<span class="tsd-signature-symbol">: </span><a href="../classes/_observer_.asyncobserver.html" class="tsd-signature-type">AsyncObserver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>observer<span class="tsd-signature-symbol">: </span><a href="../classes/_observer_.observer.html" class="tsd-signature-type">Observer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
 										<h4 class="tsd-parameters-title">Parameters</h4>
 										<ul class="tsd-parameters">
 											<li>
-												<h5>observer: <a href="../classes/_observer_.asyncobserver.html" class="tsd-signature-type">AsyncObserver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+												<h5>observer: <a href="../classes/_observer_.observer.html" class="tsd-signature-type">Observer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
 											</li>
 										</ul>
 										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -129,6 +131,9 @@
 				<ul>
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_debug_.html">"debug"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="_index_.html">"index"</a>
@@ -162,13 +167,19 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="../classes/_observer_.asyncobserver.html" class="tsd-kind-icon">Async<wbr>Observer</a>
+						<a href="../classes/_observer_.bufferedobserver.html" class="tsd-kind-icon">Buffered<wbr>Observer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="../classes/_observer_.observer.html" class="tsd-kind-icon">Observer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/_observer_.observererror.html" class="tsd-kind-icon">Observer<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../interfaces/_observer_.iobserver.html" class="tsd-kind-icon">IObserver</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="_observer_.html#observerfunction" class="tsd-kind-icon">Observer<wbr>Function</a>
+						<a href="_observer_.html#emitter" class="tsd-kind-icon">Emitter</a>
 					</li>
 				</ul>
 			</nav>
