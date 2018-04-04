@@ -1,7 +1,7 @@
-import { Generators } from ".";
+import { Observable } from ".";
 
 (async () => {
-    const it = Generators.create(observer => {
+    const it = Observable.create(observer => {
         observer.next(0);
         observer.next(1);
         observer.next(2);

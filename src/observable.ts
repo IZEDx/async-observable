@@ -3,6 +3,7 @@ import { IObserver, Observer, Emitter } from "./observer";
 import { Generators as AsyncGenerators, Operators as AsyncOperators } from "./operators/";
 import { MaybePromise } from ".";
 import { CompareFunction } from "./operators/aggregators";
+import { AsyncGenerator } from "./operators/generators";
 
 export interface ReadableStream {
     on(event: "error", cb: (err: Error) => void): void;
@@ -12,7 +13,7 @@ export interface ReadableStream {
 }
 
 export interface Subscription {
-    cancel: () => void
+    unsubscribe: () => void
     wait: Promise<void>
 }
 
@@ -35,7 +36,7 @@ export interface Subscription {
 export class Observable<T> implements AsyncIterable<T> {
     [Symbol.asyncIterator]: () => AsyncIterator<T>;
 
-    constructor(ai: AsyncIterable<T>) {
+    constructor(ai: AsyncIterable<T>, private unsubscribe: () => void) {
         Object.assign(this, ai);
     }
 
@@ -43,28 +44,38 @@ export class Observable<T> implements AsyncIterable<T> {
     // --------------------  Generators  -----------------------
     // ---------------------------------------------------------
 
-    static callback<T, K>(val: T, fn: (val: T, callback: (err: any, v: K) => any) => any): Observable<K> {
-        return new Observable(AsyncGenerators.callback(val, fn));
-    }
-
     static interval(ms: number, max: number): Observable<number> {
-        return new Observable(AsyncGenerators.interval(ms, max));
+        return Observable.unsubscribable(AsyncGenerators.interval, ms, max);
     }
 
     static of<T>(...values: (T|Promise<T>)[]): Observable<T> {
-        return new Observable(AsyncGenerators.of(...values));
+        return Observable.unsubscribable(AsyncGenerators.of, ...values);
     }
 
     static range(from: number, to: number, step: number = 1): Observable<number> {
-        return new Observable(AsyncGenerators.range(from, to, step));
+        return Observable.unsubscribable(AsyncGenerators.range, from, to, step);
     }
 
     static fibonacci(iterations?: number): Observable<number> {
-        return new Observable(AsyncGenerators.fibonacci(iterations));
+        return Observable.unsubscribable(AsyncGenerators.fibonacci, iterations);
     }
 
-    static create<T>(emitter: Emitter<T>): Observable<T> {
-        return new Observable(AsyncGenerators.create(emitter));
+    static random(min = 0, max = 1, count: number = Infinity): Observable<number> {
+        return Observable.unsubscribable(AsyncGenerators.random, min, max, count);
+    }
+
+
+    static callback<T, K>(val: T, fn: (val: T, callback: (err: any, v: K) => any) => any): Observable<K> {
+        return Observable.create(observer => {
+            fn(val, (err, v) => {
+                if (err) {
+                    observer.throw(err);
+                } else {
+                    observer.next(v);
+                    observer.return();
+                }
+            });
+        });
     }
 
     static listen<T>(stream: ReadableStream): Observable<T> {
@@ -75,12 +86,21 @@ export class Observable<T> implements AsyncIterable<T> {
         });
     }
 
+    static create<T>(emitter: Emitter<T>): Observable<T> {
+        return Observable.unsubscribable(AsyncGenerators.create, emitter);
+    }
+
+    static unsubscribable<T>(generator: AsyncGenerator<T>, ...args: any[]): Observable<T> {
+        let unsubscribe: Function = () => {};
+        return new Observable(generator(cb => unsubscribe = cb, ...args), () => unsubscribe());
+    }
+
     // ---------------------------------------------------------
     // --------------------  Aggregators  ----------------------
     // ---------------------------------------------------------
 
     count(predicate?: (value: T) => Promise<boolean>|boolean): Observable<number> {
-        return new Observable(AsyncOperators.count(this, predicate));
+        return new Observable(AsyncOperators.count(this, predicate), this.unsubscribe);
     }
 
     /**
@@ -92,16 +112,16 @@ export class Observable<T> implements AsyncIterable<T> {
      */
     max<T extends number>(comparer?: CompareFunction<T>): Observable<T>;
     max(comparer: CompareFunction<T>): Observable<T> {
-        return new Observable(AsyncOperators.max(this, comparer));
+        return new Observable(AsyncOperators.max(this, comparer), this.unsubscribe);
     }
 
     min<T extends number>(comparer?: CompareFunction<T>): Observable<T>;
     min(comparer: CompareFunction<T>): Observable<T> {
-        return new Observable(AsyncOperators.min(this, comparer));
+        return new Observable(AsyncOperators.min(this, comparer), this.unsubscribe);
     }
  
     reduce<K = T>(fn: (acc: K, curr: T) => K, seed: K): Observable<K> {
-        return new Observable(AsyncOperators.reduce(this, fn, seed));
+        return new Observable(AsyncOperators.reduce(this, fn, seed), this.unsubscribe);
     }
 
     // ---------------------------------------------------------
@@ -113,7 +133,7 @@ export class Observable<T> implements AsyncIterable<T> {
     }
 
     filter(fn: (value: T) => MaybePromise<boolean>): Observable<T> {
-        return new Observable(AsyncOperators.filter(this, fn));
+        return new Observable(AsyncOperators.filter(this, fn), this.unsubscribe);
     }
 
     // ---------------------------------------------------------
@@ -121,11 +141,11 @@ export class Observable<T> implements AsyncIterable<T> {
     // ---------------------------------------------------------
 
     map<K>(fn: (value: T) => MaybePromise<K>): Observable<K> {
-        return new Observable(AsyncOperators.map(this, fn));
+        return new Observable(AsyncOperators.map(this, fn), this.unsubscribe);
     }
 
     flatMap<K>(fn: (value: T) => Observable<K>): Observable<K> {
-        return new Observable(AsyncOperators.flatMap(this, fn));
+        return new Observable(AsyncOperators.flatMap(this, fn), this.unsubscribe);
     }
 
     // ---------------------------------------------------------
@@ -141,7 +161,7 @@ export class Observable<T> implements AsyncIterable<T> {
     }
 
     forEach(fn: (value: T) => MaybePromise<void>): Observable<T> {
-        return new Observable(AsyncOperators.forEach(this, fn));
+        return new Observable(AsyncOperators.forEach(this, fn), this.unsubscribe);
     }
 
     async toArray(): Promise<T[]> {
@@ -161,7 +181,7 @@ export class Observable<T> implements AsyncIterable<T> {
     }
 
     subscribe<K extends IObserver<T>>(subscriber: K): Subscription {
-        let cancelled = false;
+        let unsubscribed = false;
         const observer: Observer<T> = subscriber instanceof Observer
             ?   subscriber
             :   new Observer(subscriber);
@@ -169,7 +189,7 @@ export class Observable<T> implements AsyncIterable<T> {
         const promise = (async () => {
             try {
                 for await(const data of this) {
-                    if (cancelled) break;
+                    if (unsubscribed) break;
                     const r = observer.next(data);
                     if (r instanceof Promise) {
                         await r;
@@ -188,7 +208,10 @@ export class Observable<T> implements AsyncIterable<T> {
         })();
 
         return {
-            cancel: () => cancelled = true,
+            unsubscribe: () => {
+                unsubscribed = true;
+                this.unsubscribe();
+            },
             wait: promise
         };
     }

@@ -13,7 +13,7 @@ export declare class Observer<T> implements IObserver<T> {
     return(): MaybePromise<void>;
     throw(error: Error): MaybePromise<void>;
 }
-export declare type Emitter<T> = (observer: Observer<T>) => void;
+export declare type Emitter<T> = (observer: Observer<T>, onUnsubscribe: (callback: () => void) => void) => void;
 export declare class BufferedObserver<T> extends Observer<T> {
     private _waitingNext;
     private _waitingError;

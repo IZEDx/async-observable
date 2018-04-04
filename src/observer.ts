@@ -34,7 +34,7 @@ export class Observer<T> implements IObserver<T> {
     }
 }
 
-export type Emitter<T> = (observer: Observer<T>) => void;
+export type Emitter<T> = (observer: Observer<T>, onUnsubscribe: (callback: () => void) => void) => void;
 
 
 export class BufferedObserver<T> extends Observer<T> {
