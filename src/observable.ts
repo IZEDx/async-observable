@@ -1,7 +1,7 @@
 
 import { IObserver, Observer, Emitter } from "./observer";
 import { Generators as AsyncGenerators, Operators as AsyncOperators } from "./operators/";
-import { MaybePromise } from ".";
+import { MaybePromise, immediate } from ".";
 import { CompareFunction } from "./operators/aggregators";
 import { AsyncGenerator } from "./operators/generators";
 
@@ -13,8 +13,9 @@ export interface ReadableStream {
 }
 
 export interface Subscription {
-    unsubscribe: () => void
-    wait: Promise<void>
+    unsubscribe: () => void;
+    closed: boolean;
+    wait: Promise<void>;
 }
 
 /**
@@ -36,7 +37,7 @@ export interface Subscription {
 export class Observable<T> implements AsyncIterable<T> {
     [Symbol.asyncIterator]: () => AsyncIterator<T>;
 
-    constructor(ai: AsyncIterable<T>, private unsubscribe: () => void) {
+    constructor(ai: AsyncIterable<T>, private cleanup: () => void) {
         Object.assign(this, ai);
     }
 
@@ -44,24 +45,28 @@ export class Observable<T> implements AsyncIterable<T> {
     // --------------------  Generators  -----------------------
     // ---------------------------------------------------------
 
+    static duration(ms: number): Observable<number> {
+        return Observable.interval(1, ms).map(v => v / ms);
+    }
+
     static interval(ms: number, max: number): Observable<number> {
-        return Observable.unsubscribable(AsyncGenerators.interval, ms, max);
+        return Observable.cleanable(AsyncGenerators.interval, ms, max);
     }
 
     static of<T>(...values: (T|Promise<T>)[]): Observable<T> {
-        return Observable.unsubscribable<T>(AsyncGenerators.of, ...values);
+        return Observable.cleanable<T>(AsyncGenerators.of, ...values);
     }
 
     static range(from: number, to: number, step: number = 1): Observable<number> {
-        return Observable.unsubscribable(AsyncGenerators.range, from, to, step);
+        return Observable.cleanable(AsyncGenerators.range, from, to, step);
     }
 
     static fibonacci(iterations?: number): Observable<number> {
-        return Observable.unsubscribable(AsyncGenerators.fibonacci, iterations);
+        return Observable.cleanable(AsyncGenerators.fibonacci, iterations);
     }
 
     static random(min = 0, max = 1, count: number = Infinity): Observable<number> {
-        return Observable.unsubscribable(AsyncGenerators.random, min, max, count);
+        return Observable.cleanable(AsyncGenerators.random, min, max, count);
     }
 
 
@@ -87,12 +92,12 @@ export class Observable<T> implements AsyncIterable<T> {
     }
 
     static create<T>(emitter: Emitter<T>): Observable<T> {
-        return Observable.unsubscribable<T>(AsyncGenerators.create, emitter);
+        return Observable.cleanable<T>(AsyncGenerators.create, emitter);
     }
 
-    static unsubscribable<T>(generator: AsyncGenerator<T>, ...args: any[]): Observable<T> {
-        let unsubscribe: Function = () => {};
-        return new Observable(generator(cb => unsubscribe = cb, ...args), () => unsubscribe());
+    static cleanable<T>(generator: AsyncGenerator<T>, ...args: any[]): Observable<T> {
+        let cleanup: Function = () => {};
+        return new Observable(generator(cb => cleanup = cb, ...args), () => cleanup());
     }
 
     // ---------------------------------------------------------
@@ -100,7 +105,7 @@ export class Observable<T> implements AsyncIterable<T> {
     // ---------------------------------------------------------
 
     count(predicate?: (value: T) => Promise<boolean>|boolean): Observable<number> {
-        return new Observable(AsyncOperators.count(this, predicate), this.unsubscribe);
+        return new Observable(AsyncOperators.count(this, predicate), this.cleanup);
     }
 
     /**
@@ -112,16 +117,22 @@ export class Observable<T> implements AsyncIterable<T> {
      */
     max<T extends number>(comparer?: CompareFunction<T>): Observable<T>;
     max(comparer: CompareFunction<T>): Observable<T> {
-        return new Observable(AsyncOperators.max(this, comparer), this.unsubscribe);
+        return new Observable( AsyncOperators.compare(this, comparer 
+            ? comparer 
+            : (a, b) => a > b ? 1 : -1
+        ), this.cleanup);
     }
 
     min<T extends number>(comparer?: CompareFunction<T>): Observable<T>;
     min(comparer: CompareFunction<T>): Observable<T> {
-        return new Observable(AsyncOperators.min(this, comparer), this.unsubscribe);
+        return new Observable( AsyncOperators.compare(this, comparer 
+            ? ((a, b) => comparer(a,b) < 0 ? 1 : -1)
+            : ((a, b) => a > b ? 1 : -1)
+        ), this.cleanup);
     }
  
     reduce<K = T>(fn: (acc: K, curr: T) => K, seed: K): Observable<K> {
-        return new Observable(AsyncOperators.reduce(this, fn, seed), this.unsubscribe);
+        return new Observable(AsyncOperators.reduce(this, fn, seed), this.cleanup);
     }
 
     // ---------------------------------------------------------
@@ -133,7 +144,7 @@ export class Observable<T> implements AsyncIterable<T> {
     }
 
     filter(fn: (value: T) => MaybePromise<boolean>): Observable<T> {
-        return new Observable(AsyncOperators.filter(this, fn), this.unsubscribe);
+        return new Observable(AsyncOperators.filter(this, fn), this.cleanup);
     }
 
     // ---------------------------------------------------------
@@ -141,11 +152,11 @@ export class Observable<T> implements AsyncIterable<T> {
     // ---------------------------------------------------------
 
     map<K>(fn: (value: T) => MaybePromise<K>): Observable<K> {
-        return new Observable(AsyncOperators.map(this, fn), this.unsubscribe);
+        return new Observable(AsyncOperators.map(this, fn), this.cleanup);
     }
 
     flatMap<K>(fn: (value: T) => Observable<K>): Observable<K> {
-        return new Observable(AsyncOperators.flatMap(this, fn), this.unsubscribe);
+        return new Observable(AsyncOperators.flatMap(this, fn), this.cleanup);
     }
 
     // ---------------------------------------------------------
@@ -161,7 +172,7 @@ export class Observable<T> implements AsyncIterable<T> {
     }
 
     forEach(fn: (value: T) => MaybePromise<void>): Observable<T> {
-        return new Observable(AsyncOperators.forEach(this, fn), this.unsubscribe);
+        return new Observable(AsyncOperators.forEach(this, fn), this.cleanup);
     }
 
     async toArray(): Promise<T[]> {
@@ -180,40 +191,42 @@ export class Observable<T> implements AsyncIterable<T> {
         })
     }
 
-    subscribe<K extends IObserver<T>>(subscriber: K): Subscription {
-        let unsubscribed = false;
-        const observer: Observer<T> = subscriber instanceof Observer
-            ?   subscriber
-            :   new Observer(subscriber);
-            
-        const promise = (async () => {
-            try {
-                for await(const data of this) {
-                    if (unsubscribed) break;
-                    const r = observer.next(data);
-                    if (r instanceof Promise) {
-                        await r;
-                    }
-                }
-                const r = observer.return();
-                if (r instanceof Promise) {
-                    await r;
-                }
-            } catch (e) {
-                const r = observer.throw(e);
+    async run(subscription: Subscription, observer: Observer<T>) {
+        try {
+            for await(const data of this) {
+                if (subscription.closed) break;
+                const r = observer.next(data);
                 if (r instanceof Promise) {
                     await r;
                 }
             }
-        })();
+            const r = observer.return();
+            if (r instanceof Promise) {
+                await r;
+            }
+        } catch (e) {
+            const r = observer.throw(e);
+            if (r instanceof Promise) {
+                await r;
+            }
+        }
+    }
 
-        return {
+    subscribe<K extends IObserver<T>>(observer: K): Subscription {
+        const obs: Observer<T> = observer instanceof Observer
+            ?   observer
+            :   new Observer(observer);
+
+        const subscription: Subscription = {
             unsubscribe: () => {
-                unsubscribed = true;
-                this.unsubscribe();
+                subscription.closed = true;
+                this.cleanup();
             },
-            wait: promise
+            closed: false,
+            wait: immediate(() => this.run(subscription, obs))
         };
+
+        return subscription;
     }
 
 }
