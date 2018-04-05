@@ -6,3 +6,4 @@ ts-node-*/
 .nyc_output
 coverage/
 dist/
+types/
