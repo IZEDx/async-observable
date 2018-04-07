@@ -1,6 +1,6 @@
 
 function polyfillSymbol(name: string) {
-    (<any>Symbol)[name] = Symbol[name] !== undefined ? Symbol[name] : Symbol.for(name);
+    if (Symbol[name] === undefined) (<any>Symbol)[name] = Symbol.for(name);
 }
 
 export function polyfillAsyncIterator() {
