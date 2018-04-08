@@ -1,5 +1,5 @@
 
-import { Filters } from "./";
+import { Filters } from ".";
 
     
 export async function* count<T>(input: AsyncIterable<T>, predicate?: (value: T) => Promise<boolean>|boolean): AsyncIterable<number> {

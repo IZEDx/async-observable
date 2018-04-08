@@ -4,6 +4,11 @@
  */
 export type AsyncOperator<T, K = T> = (input: AsyncIterable<T>, ...args: any[]) => AsyncIterable<K>;
 
+/**
+ * An AsyncGenerator is a function that creates an AsyncIterable, it should provide a function to unsubscribe via callback.
+ */
+export type AsyncGenerator<T> = (onUnsubscribe: (callback: Function) => void, ...args: any[]) => AsyncIterable<T>;
+
 
 import * as Generators from "./generators";
 import * as Filters from "./filters";

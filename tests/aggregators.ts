@@ -5,16 +5,14 @@ import { when } from "./utils";
 
 
 test("Count should count all elements.", when(async assert => {
-    const countit = Observable.range(1,7).count();
-    const itresult = await countit[Symbol.asyncIterator]().next();
-    assert.equal(itresult.value, 7, "The counted result should equal 7.");
+    const result = await Observable.range(1,7).count();
+    assert.equal(result, 7, "The counted result should equal 7.");
     assert.end();
 }));
 
 test("Count should apply predicate.", when(async assert => {
-    const countit = Observable.range(1,7).count(i => i % 2 === 1);
-    const itresult = await countit[Symbol.asyncIterator]().next();
-    assert.equal(itresult.value, 4, "The counted result should equal 4.");
+    const result = await Observable.range(1,7).count(i => i % 2 === 1);
+    assert.equal(result, 4, "The counted result should equal 4.");
     assert.end();
 }));
 

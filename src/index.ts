@@ -37,4 +37,6 @@ export async function immediate<T, K>(fn: (...args: K[]) => T|Promise<T>, ...arg
 
 export * from "./observable";
 export * from "./observer";
+export * from "./subscription";
+export * from "./events";
 export * from "./operators/";

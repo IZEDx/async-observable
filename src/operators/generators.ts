@@ -1,13 +1,7 @@
 
-import { Emitter, BufferedObserver } from "../observer";
+import { Emitter, BufferedObserver } from "..";
 
 const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
-
-/**
- * An AsyncGenerator is a function that creates an AsyncIterable
- */
-export type AsyncGenerator<T> = (onUnsubscribe: (callback: Function) => void, ...args: any[]) => AsyncIterable<T>;
-
 
 /**
  * Creates an AsyncIterable that yields increments every given milliseconds for the given times
@@ -33,6 +27,15 @@ export async function* of<T>(onUnsubscribe: (callback: Function) => void, ...val
         if (cancelled) break;
         yield (v instanceof Promise) ? await v : v;
     }
+}
+
+export async function* from<T>(onUnsubscribe: (callback: Function) => void, it: Iterable<T | Promise<T>>): AsyncIterable<T> {
+    let cancelled = false;
+    onUnsubscribe(() => cancelled = true);
+    for (const v of it) {
+        if (cancelled) break;
+        yield (v instanceof Promise) ? await v : v;
+    }       
 }
 
 /**
